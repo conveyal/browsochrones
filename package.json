@@ -18,7 +18,7 @@
   },
   "scripts": {
     "build": "browserify index.js > build/index.js",
-    "develop": "watchify -v -s Static index.js -o build/index.js",
+    "develop": "watchify -v index.js -o build/index.js",
     "docs": "dox -r < index.js | doxme --readme > README.md",
     "prepublish": "npm run-script build",
     "start": "npm run-script develop & serve",
