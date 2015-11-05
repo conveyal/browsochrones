@@ -105,7 +105,7 @@ export default function getSurface (query, stopTreeCache, origin, originX, origi
           if (travelTime === 255) continue
 
           // put this in all of the correct cutoff categories for this minute
-          for (let cutoff = 119; cutoff >= travelTime - 1; cutoff--) {
+          for (let cutoff = 119; cutoff >= travelTime; cutoff--) {
             // TODO roll off smoothly
             accessPerMinute[cutoff * nMinutes + minute] += val
           }
