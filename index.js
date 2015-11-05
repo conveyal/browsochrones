@@ -217,6 +217,7 @@ export function isochroneTile (canvas, tilePoint, zoom, query, surface, cutoffMi
 
 export function getQuery (url, cb) {
   request({url: `${url}query.json`, gzip: true}, (err, data, body) => {
+    if (err) console.error(err)
     cb(JSON.parse(body))
   })
 }
@@ -268,7 +269,6 @@ export function getGrid (url, category, cb) {
       })
     })
 }
-
 
 /** main
 let url = process.argv[2]

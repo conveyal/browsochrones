@@ -2,9 +2,9 @@
 
 /** convert longitude to pixel value */
 export function lonToPixel (lon, zoom) {
-    // factor of 256 is to get a pixel value not a tile number
-    // return int, 32 bit int sufficient for pixels up to zoom 22
-    return ((lon + 180) / 360 * Math.pow(2, zoom) * 256) | 0
+  // factor of 256 is to get a pixel value not a tile number
+  // return int, 32 bit int sufficient for pixels up to zoom 22
+  return ((lon + 180) / 360 * Math.pow(2, zoom) * 256) | 0
 }
 
 /** convert latitude to pixel value */

@@ -1,8 +1,8 @@
 {
-  "name": "static-images",
-  "version": "1.0.0",
+  "name": "browsochrones",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "./build/index",
   "repository": {
     "type": "git",
     "url": "https://github.com/conveyal/browsochrones"
@@ -21,13 +21,14 @@
     ]
   },
   "scripts": {
-    "build": "browserify -s Static index.js > static.js",
-    "develop": "watchify -v -s Static index.js -o static.js",
+    "build": "browserify index.js > build/index.js",
+    "develop": "watchify -v -s Static index.js -o build/index.js",
     "docs": "dox -r < index.js | doxme --readme > README.md",
-    "lint": "standard",
-    "test": "serve"
+    "prepublish": "npm run-script build",
+    "start": "npm run-script develop & serve",
+    "test": "standard"
   },
-  "author": "",
+  "author": "Conveyal",
   "license": "MIT",
   "dependencies": {
     "babel-polyfill": "^6.0.16",
@@ -35,6 +36,7 @@
     "buffer": "^3.5.1",
     "geobuf": "^1.0.1",
     "geojson-extent": "^0.3.1",
+    "isomorphic-fetch": "^2.2.0",
     "pbf": "^1.3.5",
     "request": "^2.65.0",
     "turf-inside": "^1.1.4"
@@ -46,7 +48,6 @@
     "browserify": "^12.0.1",
     "dox": "^0.8.0",
     "doxme": "^1.8.2",
-    "isomorphic-fetch": "^2.2.0",
     "leaflet": "^0.7.3",
     "serve": "^1.4.0",
     "standard": "^5.3.1",

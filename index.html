@@ -2,9 +2,7 @@
 <html>
   <head>
     <title>Static Site Output</title>
-    <script src="static.js"></script>
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 
     <style type="text/css">
       html, body, #map { height: 100%; font-family: sans-serif; padding: 0px;}
@@ -19,8 +17,10 @@
       <output></output>
     </div>
 
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="build/index.js"></script>
     <script type="text/javascript">
-      var baseUrl = '';
+      var baseUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline/';
 
       // retrieve query and stop tree cache
       var query;
