@@ -3,6 +3,7 @@
  */
 
 import request from 'browser-request'
+import fetch from 'isomorphic-fetch'
 
 /**
  * Write a static image for the origin pixels x and y to the stream stream. which can be BEST, WORST or AVERAGE.
@@ -190,7 +191,7 @@ export function isochroneTile (canvas, tilePoint, zoom, query, surface, cutoffMi
       // figure out where xp and yp fall on the surface
       let xpsurf = (xp / scaleFactor + xoff) | 0
       let ypsurf = (yp / scaleFactor + yoff) | 0
-      
+
       let val
       if (xpsurf < 0 || xpsurf > query.width || ypsurf < 0 || ypsurf > query.height) {
         val = 255
