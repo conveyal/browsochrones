@@ -53,7 +53,10 @@ grids.forEach((arrbuf, name) => {
   let fn = name.replace(/[^a-zA-Z0-9\-_]/g, '_')
   categories[name] = fn
 
-  zlib.gzip(buff, (err, gzipped) => fs.writeFile(args[1] + fn + '.grid', gzipped, () => {}))
+  zlib.gzip(buff, (err, gzipped) => {
+    if (err) console.error(err)
+    fs.writeFile(args[1] + fn + '.grid', gzipped, () => {})
+  })
 
   if (png) writePng(arrbuf, args[1] + fn + '.png')
 })

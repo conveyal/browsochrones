@@ -74,23 +74,23 @@ getQuery(baseUrl, function (data) {
 
 let stopTreeCache
 getStopTrees(baseUrl, function (data) {
-  stopTreeCache = data;
+  stopTreeCache = data
 })
 
 let grid
 getGrid(baseUrl, 'Jobs_total', function (data) {
-  grid = data;
+  grid = data
 })
 
 let isoLayer = null
 
-let map = L.map('map').setView([39.766667, -86.15], 12)
+let map = window.L.map('map').setView([39.766667, -86.15], 12)
 
-L.tileLayer('http://{s}.tiles.mapbox.com/v3/conveyal.hml987j0/{z}/{x}/{y}@2x.png', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
-    maxZoom: 18,
-    detectRetina: true
-  }).addTo(map)
+window.L.tileLayer('http://{s}.tiles.mapbox.com/v3/conveyal.hml987j0/{z}/{x}/{y}@2x.png', {
+  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
+  maxZoom: 18,
+  detectRetina: true
+}).addTo(map)
 
 map.on('click', function (e) {
   // get the pixel coordinates
@@ -115,12 +115,11 @@ map.on('click', function (e) {
     let access = accessibilityForCutoff(surface, 60, 'AVERAGE')
     console.timeEnd('accessibility')
 
-    document.querySelector('#access output').value = access;
+    document.querySelector('#access output').value = access
 
-    if (isoLayer != null)
-      map.removeLayer(isoLayer)
+    if (isoLayer != null) map.removeLayer(isoLayer)
 
-    isoLayer = L.tileLayer.canvas()
+    isoLayer = window.L.tileLayer.canvas()
     isoLayer.drawTile = function (canvas, tilePoint, zoom) {
       isochroneTile(canvas, tilePoint, zoom, query, surface, 60)
     }

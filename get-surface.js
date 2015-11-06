@@ -40,7 +40,7 @@ export default function getSurface (query, stopTreeCache, origin, originX, origi
         // delta-coded
         time += stopTreeCache[stcOffset++]
 
-        //console.log(`stop ${stopId} at distance ${distance} (${nStops} stops to consider)`)
+        // console.log(`stop ${stopId} at distance ${distance} (${nStops} stops to consider)`)
 
         // de-delta-code times
         let previous = 0

@@ -1,4 +1,4 @@
-/** 
+/**
  * takes spatial data from GeoJSON and coerces it to regular grid
  * @author mattwigway
  */
