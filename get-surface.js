@@ -7,11 +7,7 @@
 export default function getSurface (query, stopTreeCache, origin, originX, originY, which, grid) {
   let ret = new Uint8Array(query.width * query.height)
 
-  // where is the transit portion of the origin data
-  // there are a certain number of pixels in each direction aroudn the origin with times in them. read the radius, multiply by two to get diameter,
-  // add one because there is a pixel in the center, square to get number of pixels, add one to skip the first value which gives radius, and or with to
-  // convert to 32-bit int
-  let transitOffset = (Math.pow(origin[0] * 2 + 1, 2) + 1) | 0
+  let transitOffset = getTransitOffset(origin[0])
 
   // how many departure minutes are there
   // skip number of stops
@@ -119,4 +115,15 @@ export default function getSurface (query, stopTreeCache, origin, originX, origi
     access: accessPerMinute,
     nMinutes: nMinutes
   }
+}
+
+/**
+ * Where is the transit portion of the origin data there are a certain number of pixels in each direction aroudn the origin with times in them. read the radius, multiply by two to get diameter, add one because there is a pixel in the center, square to get number of pixels, add one to skip the first value which gives radius, and or with to convert to 32-bit int.
+ *
+ * @param {Number} radius
+ * @return {Number}
+ */
+
+export function getTransitOffset (radius) {
+  return (Math.pow(radius * 2 + 1, 2) + 1) | 0
 }
