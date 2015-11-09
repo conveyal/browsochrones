@@ -39,8 +39,7 @@ export default function getSurface (query, stopTreeCache, origin, originX, origi
         // console.log(`stop ${stopId} at distance ${distance} (${nStops} stops to consider)`)
 
         // de-delta-code times
-        let previous = 0
-        for (let minute = 0; minute < nMinutes; minute++) {
+        for (let minute = 0, previous = 0; minute < nMinutes; minute++) {
           let offset = transitOffset + 2 + stopId * nMinutes + minute
           let travelTimeToStop = origin[offset] + previous
           previous = travelTimeToStop
@@ -56,32 +55,7 @@ export default function getSurface (query, stopTreeCache, origin, originX, origi
       }
 
       // compute value for pixel
-      let pixel
-      if (which === 'BEST_CASE') {
-        pixel = 255
-        for (let i = 0; i < nMinutes; i++) {
-          pixel = Math.min(pixel, travelTimes[i])
-        }
-      } else if (which === 'AVERAGE') {
-        let sum = 0
-        let count = 0
-
-        for (let i = 0; i < nMinutes; i++) {
-          if (travelTimes[i] !== 255) {
-            sum += travelTimes[i]
-            count++
-          }
-        }
-
-        // coerce to int
-        if (count > nMinutes / 2) pixel = (sum / count) | 0
-        else pixel = 255
-      } else if (which === 'WORST_CASE') {
-        pixel = 0
-        for (let i = 0; i < nMinutes; i++) {
-          pixel = Math.max(pixel, travelTimes[i])
-        }
-      }
+      let pixel = computePixelValue(which, travelTimes)
 
       // set pixel value
       ret[pixelIdx] = pixel
@@ -126,4 +100,59 @@ export default function getSurface (query, stopTreeCache, origin, originX, origi
 
 export function getTransitOffset (radius) {
   return (Math.pow(radius * 2 + 1, 2) + 1) | 0
+}
+
+/**
+ * Get the pixel value
+ *
+ * @param {String} which
+ * @param {Array} travelTimes
+ * @return {Number} pixelValue
+ */
+
+export function computePixelValue (which, travelTimes) {
+  switch (which) {
+    case 'BEST_CASE':
+      return computeBestPixelValue(travelTimes)
+    case 'AVERAGE':
+      return computeAveragePixelValue(travelTimes)
+    case 'WORST_CASE':
+      return computeWorstPixelValue(travelTimes)
+  }
+}
+
+/**
+ * Compute best pixel value
+ */
+
+export function computeBestPixelValue (travelTimes) {
+  let pixel = 255
+  for (let i = 0; i < travelTimes.length; i++) {
+    pixel = Math.min(pixel, travelTimes[i])
+  }
+  return pixel
+}
+
+export function computeAveragePixelValue (travelTimes) {
+  let sum = 0
+  let count = 0
+
+  for (let i = 0; i < travelTimes.length; i++) {
+    if (travelTimes[i] !== 255) {
+      sum += travelTimes[i]
+      count++
+    }
+  }
+
+  // coerce to int
+  if (count > travelTimes.length / 2) return (sum / count) | 0
+  else return 255
+}
+
+export function computeWorstPixelValue (travelTimes) {
+  let pixel = 0
+  for (let i = 0; i < travelTimes.length; i++) {
+    pixel = Math.max(pixel, travelTimes[i])
+  }
+  return pixel
 }
