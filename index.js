@@ -107,7 +107,7 @@ map.on('click', function (e) {
   x -= query.west
   y -= query.north
 
-  if (x < 0 || x > query.width || y < 0 || y > query.height) return // todo should show blank layer
+  if (x < 0 || x > query.width || y < 0 || y > query.height) return // TODO should show blank layer
 
   getOrigin(baseUrl, x, y)
     .then(origin => {
@@ -121,13 +121,11 @@ map.on('click', function (e) {
       })
       console.timeEnd('surface')
 
-      console.time('accessibility')
       let access = accessibilityForCutoff({
         cutoff: 60,
         surface,
         which: 'AVERAGE'
       })
-      console.timeEnd('accessibility')
 
       document.querySelector('#access output').value = access
 
