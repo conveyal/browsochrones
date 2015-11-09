@@ -17,9 +17,8 @@
     "transform": "babelify"
   },
   "scripts": {
-    "build": "browserify index.js > build/index.js",
-    "develop": "watchify -v -t babelify index.js -o build/index.js",
-    "docs": "dox -r < index.js | doxme --readme > README.md",
+    "build": "browserify lib/index.js > build/index.js",
+    "develop": "watchify -v -t babelify lib/index.js -o build/index.js",
     "prepublish": "npm run-script build",
     "start": "npm run-script develop & serve",
     "test": "babel-node test/index.js"
@@ -42,8 +41,6 @@
     "babel-preset-stage-0": "^6.0.15",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
-    "dox": "^0.8.0",
-    "doxme": "^1.8.2",
     "leaflet": "^0.7.3",
     "serve": "^1.4.0",
     "standard": "^5.3.1",
