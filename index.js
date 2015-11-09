@@ -99,9 +99,7 @@ window.L.tileLayer('http://{s}.tiles.mapbox.com/v3/conveyal.hml987j0/{z}/{x}/{y}
 
 map.on('click', function (e) {
   // get the pixel coordinates
-  let pxpt = map.project(e.latlng)
-  let x = pxpt.x
-  let y = pxpt.y
+  let {x, y} = map.project(e.latlng)
   let scale = Math.pow(2, query.zoom - map.getZoom())
   x *= scale
   y *= scale
@@ -114,11 +112,21 @@ map.on('click', function (e) {
   getOrigin(baseUrl, x, y)
     .then(origin => {
       console.time('surface')
-      let surface = getSurface(query, stopTreeCache, origin, x, y, 'AVERAGE', grid)
+      let surface = getSurface({
+        grid,
+        origin,
+        query,
+        stopTreeCache,
+        which: 'AVERAGE'
+      })
       console.timeEnd('surface')
 
       console.time('accessibility')
-      let access = accessibilityForCutoff(surface, 60, 'AVERAGE')
+      let access = accessibilityForCutoff({
+        cutoff: 60,
+        surface,
+        which: 'AVERAGE'
+      })
       console.timeEnd('accessibility')
 
       document.querySelector('#access output').value = access

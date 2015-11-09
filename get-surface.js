@@ -4,18 +4,18 @@
  * x and y coordinates of the origin relative to the query, what parameter you want (BEST_CASE, WORST_CASE or AVERAGE),
  * and a grid. Returns a travel time/accessibility surface which can be used by isochoroneTile and accessibilityForCutoff
  */
-export default function getSurface (query, stopTreeCache, origin, originX, originY, which, grid) {
-  let ret = new Uint8Array(query.width * query.height)
+export default function getSurface ({grid, origin, query, stopTreeCache, which}) {
+  let surface = new Uint8Array(query.width * query.height)
 
   let transitOffset = getTransitOffset(origin[0])
 
-  // how many departure minutes are there
-  // skip number of stops
+  // how many departure minutes are there. skip number of stops
   let nMinutes = origin[transitOffset + 1]
 
   let travelTimes = new Uint8Array(nMinutes)
+
   // store the accessibility at each departure minute for every possible cutoff 1 - 120
-  let accessPerMinute = new Float64Array(nMinutes * 120)
+  let access = new Float64Array(nMinutes * 120)
 
   // x and y refer to pixel coordinates not origins here
   // loop over rows first
@@ -53,17 +53,17 @@ export default function getSurface (query, stopTreeCache, origin, originX, origi
       }
 
       // compute and set value for pixel
-      ret[pixelIdx] = computePixelValue(which, travelTimes)
+      surface[pixelIdx] = computePixelValue(which, travelTimes)
 
       // compute access values
-      computeAccessValues(x, y, query, grid, travelTimes, accessPerMinute)
+      computeAccessValues(x, y, query, grid, travelTimes, access)
     }
   }
 
   return {
-    surface: ret,
-    access: accessPerMinute,
-    nMinutes: nMinutes
+    surface,
+    access,
+    nMinutes
   }
 }
 
@@ -161,7 +161,7 @@ export function computeWorstPixelValue (travelTimes) {
  * @param {Float64Array} accessPerMinute
  */
 
-export function computeAccessValues (x, y, query, grid, travelTimes, accessPerMinute) {
+export function computeAccessValues (x, y, query, grid, travelTimes, access) {
   // get value of this pixel from grid
   let gridx = x + query.west - grid.west
   let gridy = y + query.north - grid.north
@@ -177,7 +177,7 @@ export function computeAccessValues (x, y, query, grid, travelTimes, accessPerMi
         // put this in all of the correct cutoff categories for this minute
         for (let cutoff = 119; cutoff >= travelTime - 1; cutoff--) {
           // TODO roll off smoothly
-          accessPerMinute[cutoff * travelTimes.length + minute] += val
+          access[cutoff * travelTimes.length + minute] += val
         }
       }
     }
