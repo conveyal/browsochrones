@@ -1,8 +1,8 @@
 /** unit test for getSurface */
 
 import test from 'tape'
-import getSurface from '../get-surface'
-import accessibilityForCutoff from '../accessibility-for-cutoff'
+import getSurface from '../lib/get-surface'
+import accessibilityForCutoff from '../lib/accessibility-for-cutoff'
 
 /** really basic test for getSurface, using contrived data */
 test('basic', (assert) => {
