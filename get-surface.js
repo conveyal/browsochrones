@@ -36,8 +36,6 @@ export default function getSurface (query, stopTreeCache, origin, originX, origi
         // delta-coded
         time += stopTreeCache[stcOffset++]
 
-        // console.log(`stop ${stopId} at distance ${distance} (${nStops} stops to consider)`)
-
         // de-delta-code times
         for (let minute = 0, previous = 0; minute < nMinutes; minute++) {
           let offset = transitOffset + 2 + stopId * nMinutes + minute
@@ -54,33 +52,11 @@ export default function getSurface (query, stopTreeCache, origin, originX, origi
         }
       }
 
-      // compute value for pixel
-      let pixel = computePixelValue(which, travelTimes)
+      // compute and set value for pixel
+      ret[pixelIdx] = computePixelValue(which, travelTimes)
 
-      // set pixel value
-      ret[pixelIdx] = pixel
-
-      // compute access value
-      // get value of this pixel from grid
-      let gridx = x + query.west - grid.west
-      let gridy = y + query.north - grid.north
-
-      // if condition below fails we're off the grid, value is zero, don't bother with calculations
-      if (gridx >= 0 && gridx < grid.width && gridy >= 0 && gridy < grid.height) {
-        let val = grid.data[gridy * grid.width + gridx]
-
-        for (let minute = 0; minute < nMinutes; minute++) {
-          let travelTime = travelTimes[minute]
-
-          if (travelTime === 255) continue
-
-          // put this in all of the correct cutoff categories for this minute
-          for (let cutoff = 119; cutoff >= travelTime - 1; cutoff--) {
-            // TODO roll off smoothly
-            accessPerMinute[cutoff * nMinutes + minute] += val
-          }
-        }
-      }
+      // compute access values
+      computeAccessValues(x, y, query, grid, travelTimes, accessPerMinute)
     }
   }
 
@@ -106,7 +82,7 @@ export function getTransitOffset (radius) {
  * Get the pixel value
  *
  * @param {String} which
- * @param {Array} travelTimes
+ * @param {Uint8Array} travelTimes
  * @return {Number} pixelValue
  */
 
@@ -123,6 +99,9 @@ export function computePixelValue (which, travelTimes) {
 
 /**
  * Compute best pixel value
+ *
+ * @param {Uint8Array} travelTimes
+ * @return {Number} pixel
  */
 
 export function computeBestPixelValue (travelTimes) {
@@ -132,6 +111,13 @@ export function computeBestPixelValue (travelTimes) {
   }
   return pixel
 }
+
+/**
+ * Compute average pixel value
+ *
+ * @param {Uint8Array} travelTimes
+ * @return {Number} pixel
+ */
 
 export function computeAveragePixelValue (travelTimes) {
   let sum = 0
@@ -149,10 +135,51 @@ export function computeAveragePixelValue (travelTimes) {
   else return 255
 }
 
+/**
+ * Compute worst pixel value
+ *
+ * @param {Uint8Array} travelTimes
+ * @return {Number} pixel
+ */
+
 export function computeWorstPixelValue (travelTimes) {
   let pixel = 0
   for (let i = 0; i < travelTimes.length; i++) {
     pixel = Math.max(pixel, travelTimes[i])
   }
   return pixel
+}
+
+/**
+ * Compute access values for x, y
+ *
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Object} query
+ * @param {Object} grid
+ * @param {Uint8Array} travelTimes
+ * @param {Float64Array} accessPerMinute
+ */
+
+export function computeAccessValues (x, y, query, grid, travelTimes, accessPerMinute) {
+  // get value of this pixel from grid
+  let gridx = x + query.west - grid.west
+  let gridy = y + query.north - grid.north
+
+  // if condition below fails we're off the grid, value is zero, don't bother with calculations
+  if (gridx >= 0 && gridx < grid.width && gridy >= 0 && gridy < grid.height) {
+    let val = grid.data[gridy * grid.width + gridx]
+
+    for (let minute = 0; minute < travelTimes.length; minute++) {
+      let travelTime = travelTimes[minute]
+
+      if (travelTime !== 255) {
+        // put this in all of the correct cutoff categories for this minute
+        for (let cutoff = 119; cutoff >= travelTime - 1; cutoff--) {
+          // TODO roll off smoothly
+          accessPerMinute[cutoff * travelTimes.length + minute] += val
+        }
+      }
+    }
+  }
 }
