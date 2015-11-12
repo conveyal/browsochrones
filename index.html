@@ -90,14 +90,16 @@
           return
         }
 
+        console.time('fetching origin')
         fetch(`${baseUrl}/${origin.x | 0}/${origin.y | 0}.dat`)
           .then(res => res.arrayBuffer())
           .then(origin => {
+            console.timeEnd('fetching origin')
             bc.setOrigin(origin)
 
-            console.time('surface')
+            console.time('generating surface')
             bc.generateSurface()
-            console.timeEnd('surface')
+            console.timeEnd('generating surface')
 
             // Set the access output
             document.getElementById('access').value = bc.getAccessibilityForCutoff()
