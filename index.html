@@ -8,9 +8,10 @@
       html, body, #map {
         height: 100%;
         margin: 0px;
+        font-family: Helvetica, sans-serif;
       }
 
-      #access {
+      #info {
         position: fixed;
         top: 10px;
         right: 10px;
@@ -21,31 +22,33 @@
         padding: 10px;
       }
 
-      #access output {
+      output {
         display: block;
-        font-size: 20pt;
+        font-size: 1.5em;
+        font-weight: bold;
       }
     </style>
   </head>
   <body>
     <div id="map"></div>
-    <div id="access">
-
+    <div id="info">
+      X/Y
+      <output id="location"></output>
       Jobs within 60 minutes
-      <output></output>
+      <output id="access"></output>
     </div>
 
     <script src="https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js"></script>
     <script src="node_modules/babel-polyfill/dist/polyfill.js"></script>
     <script src="build/index.js"></script>
     <script>
-      const fetch = require('isomorphic-fetch')
-      const Browsochrone = require('browsochrone')
+      var fetch = require('isomorphic-fetch')
+      var Browsochrone = require('browsochrones').default
 
-      const bc = new Browsochrone()
+      var bc = new Browsochrone()
 
-      const localUrl = 'http://localhost:3000/test/data'
-      const baseUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline'
+      var localUrl = 'http://localhost:3000/test/data'
+      var baseUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline'
 
       Promise
         .all([
@@ -53,19 +56,19 @@
           fetch(`${localUrl}/stop_trees.dat`).then(res => res.arrayBuffer()),
           fetch(`${localUrl}/Jobs_total.grid`).then(res => res.arrayBuffer())
         ])
-        .then(([query, stopTrees, grid]) => {
-          bc.setQuery(query)
-          bc.setStopTrees(stopTrees)
-          bc.setGrid(grid)
+        .then(res => {
+          bc.setQuery(res[0])
+          bc.setStopTrees(res[1])
+          bc.setGrid(res[2])
         })
         .catch(e => {
           console.error(e)
           console.error(e.stack)
         })
 
-      let isoLayer = null
+      var isoLayer = null
 
-      let map = window.L.mapbox
+      var map = window.L.mapbox
         .map('map', 'conveyal.hml987j0', {
           accessToken: 'pk.eyJ1IjoiY29udmV5YWwiLCJhIjoiY2lndnI5cms4MHJ4Mnd3bTB4MzYycDc4NiJ9.C40M0KSYXGSX_IbbqN53Eg',
           tileLayer: {
@@ -76,9 +79,10 @@
 
       map.on('click', function (e) {
         // get the pixel coordinates
-        const {x, y} = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
+        var origin = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
+        document.getElementById('location').value = `${origin.x | 0} / ${origin.y | 0}`
 
-        if (!bc.coordinatesInQueryBounds({x, y})) {
+        if (!bc.coordinatesInQueryBounds(origin)) {
           if (isoLayer) {
             map.removeLayer(isoLayer)
             isoLayer = null
@@ -86,7 +90,7 @@
           return
         }
 
-        fetch(`${baseUrl}/${x | 0}/${y | 0}.dat`)
+        fetch(`${baseUrl}/${origin.x | 0}/${origin.y | 0}.dat`)
           .then(res => res.arrayBuffer())
           .then(origin => {
             bc.setOrigin(origin)
@@ -96,7 +100,7 @@
             console.timeEnd('surface')
 
             // Set the access output
-            document.querySelector('#access output').value = bc.getAccessibilityForCutoff()
+            document.getElementById('access').value = bc.getAccessibilityForCutoff()
 
             if (isoLayer) map.removeLayer(isoLayer)
 
