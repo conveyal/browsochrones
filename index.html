@@ -38,5 +38,82 @@
     <script src="https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js"></script>
     <script src="node_modules/babel-polyfill/dist/polyfill.js"></script>
     <script src="build/index.js"></script>
+    <script>
+      const fetch = require('isomorphic-fetch')
+      const Browsochrone = require('browsochrone')
+
+      const bc = new Browsochrone()
+
+      const localUrl = 'http://localhost:3000/test/data'
+      const baseUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline'
+
+      Promise
+        .all([
+          fetch(`${localUrl}/query.json`).then(res => res.json()),
+          fetch(`${localUrl}/stop_trees.dat`).then(res => res.arrayBuffer()),
+          fetch(`${localUrl}/Jobs_total.grid`).then(res => res.arrayBuffer())
+        ])
+        .then(([query, stopTrees, grid]) => {
+          bc.setQuery(query)
+          bc.setStopTrees(stopTrees)
+          bc.setGrid(grid)
+        })
+        .catch(e => {
+          console.error(e)
+          console.error(e.stack)
+        })
+
+      let isoLayer = null
+
+      let map = window.L.mapbox
+        .map('map', 'conveyal.hml987j0', {
+          accessToken: 'pk.eyJ1IjoiY29udmV5YWwiLCJhIjoiY2lndnI5cms4MHJ4Mnd3bTB4MzYycDc4NiJ9.C40M0KSYXGSX_IbbqN53Eg',
+          tileLayer: {
+            maxZoom: 18
+          }
+        })
+        .setView([39.766667, -86.15], 12)
+
+      map.on('click', function (e) {
+        // get the pixel coordinates
+        const {x, y} = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
+
+        if (!bc.coordinatesInQueryBounds({x, y})) {
+          if (isoLayer) {
+            map.removeLayer(isoLayer)
+            isoLayer = null
+          }
+          return
+        }
+
+        fetch(`${baseUrl}/${x | 0}/${y | 0}.dat`)
+          .then(res => res.arrayBuffer())
+          .then(origin => {
+            bc.setOrigin(origin)
+
+            console.time('surface')
+            bc.generateSurface()
+            console.timeEnd('surface')
+
+            // Set the access output
+            document.querySelector('#access output').value = bc.getAccessibilityForCutoff()
+
+            if (isoLayer) map.removeLayer(isoLayer)
+
+            isoLayer = window.L.tileLayer.canvas()
+            isoLayer.drawTile = bc.drawTile.bind(bc)
+            isoLayer.addTo(map)
+          })
+          .catch(err => {
+            if (isoLayer) {
+              map.removeLayer(isoLayer)
+              isoLayer = null
+            }
+
+            console.error(err)
+            console.error(err.stack)
+          })
+      })
+    </script>
   </body>
 </html>
