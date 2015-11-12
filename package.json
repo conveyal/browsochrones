@@ -18,7 +18,7 @@
   },
   "scripts": {
     "build": "browserify lib/index.js > build/index.js",
-    "develop": "watchify -v -t babelify lib/index.js -o build/index.js",
+    "develop": "watchify -v -d -t babelify lib/index.js -o build/index.js",
     "prepublish": "npm run-script build",
     "start": "npm run-script develop & serve",
     "test": "babel-node test/index.js"
