@@ -2,7 +2,6 @@
 
 import test from 'tape'
 import getSurface from '../lib/get-surface'
-import accessibilityForCutoff from '../lib/accessibility-for-cutoff'
 
 /** really basic test for getSurface, using contrived data */
 test('basic', (assert) => {
@@ -44,7 +43,7 @@ test('basic', (assert) => {
   // accessiiblity at each departure minute and then taking an average, and there's something I haven't figured out
   // numerically that causes it to be off a bit. If instead of saving 6 travel times per departure minute we only save the one,
   // everything works as expected.
-  //assert.equal(accessibilityForCutoff(sface, 60, 'AVERAGE'), expected, 'accessibility')
+  // assert.equal(accessibilityForCutoff(sface, 60, 'AVERAGE'), expected, 'accessibility')
 
   assert.end()
 })
