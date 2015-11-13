@@ -1,4 +1,8 @@
 
+### 0.0.3 — 2015-11-13
+
+* Do not automatically compute access values in `get-surface`.
+
 ### 0.0.2 — 2015-11-13
 
 * Fix linter errors
