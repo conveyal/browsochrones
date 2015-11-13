@@ -18,7 +18,7 @@
   },
   "scripts": {
     "build": "browserify lib/index.js > build/index.js",
-    "prepublish": "npm run build",
+    "prepublish": "babel lib --out-dir build",
     "start": "npm run www & npm run watch",
     "test": "babel-node test/index.js",
     "watch": "watchify -dv -t babelify -r isomorphic-fetch -r ./lib/index.js:browsochrones -o build/index.js",
