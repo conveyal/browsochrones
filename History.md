@@ -1,4 +1,8 @@
 
+### 0.0.4 — 2015-11-17
+
+* Utilizing new format, automatically compute access value.
+
 ### 0.0.3 — 2015-11-13
 
 * Do not automatically compute access values in `get-surface`.
