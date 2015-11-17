@@ -17,16 +17,20 @@
     "transform": "babelify"
   },
   "scripts": {
-    "build": "browserify lib/index.js > build/index.js",
+    "build": "browserify -t browserify-css lib/index.js > build/index.js",
     "prepublish": "npm run build",
     "start": "npm run www & npm run watch",
     "test": "babel-node test/index.js",
-    "watch": "watchify -dv -t babelify -r isomorphic-fetch -r ./lib/index.js:browsochrones -o build/index.js",
+    "watch": "watchify -dv -g browserify-css -t babelify -r isomorphic-fetch -r transitive-js -r leaflet-transitivelayer -r ./lib/index.js:browsochrones -o build/index.js",
     "www": "serve"
   },
   "author": "Conveyal",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "leaflet-transitivelayer": "^0.1.0",
+    "transitive-js": "^0.8.0",
+    "webpack": "^1.12.6"
+  },
   "devDependencies": {
     "babel-cli": "^6.1.2",
     "babel-eslint": "^4.1.4",
@@ -35,11 +39,13 @@
     "babel-preset-stage-0": "^6.0.15",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
+    "browserify-css": "^0.8.1",
     "isomorphic-fetch": "^2.2.0",
     "serve": "^1.4.0",
     "standard": "^5.3.1",
     "tape": "^4.2.2",
-    "watchify": "^3.2.0"
+    "watchify": "^3.2.0",
+    "webpack": "^1.12.6"
   },
   "standard": {
     "parser": "babel-eslint"

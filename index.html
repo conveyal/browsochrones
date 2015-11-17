@@ -43,6 +43,9 @@
     <script src="build/index.js"></script>
     <script>
       var fetch = require('isomorphic-fetch')
+      var Transitive = require('transitive-js')
+      require('leaflet-transitivelayer')
+
       var Browsochrone = require('browsochrones').default
 
       var bc = new Browsochrone()
@@ -54,12 +57,14 @@
         .all([
           fetch(`${baseUrl}/query.json`).then(res => res.json()),
           fetch(`${baseUrl}/stop_trees.dat`).then(res => res.arrayBuffer()),
-          fetch(`${gridUrl}/Jobs_total.grid`).then(res => res.arrayBuffer())
+          fetch(`${gridUrl}/Jobs_total.grid`).then(res => res.arrayBuffer()),
+          fetch(`${baseUrl}/transitive.json`).then(res => res.json())
         ])
         .then(res => {
           bc.setQuery(res[0])
           bc.setStopTrees(res[1])
           bc.setGrid(res[2])
+          bc.setTransitiveNetwork(res[3])
         })
         .catch(e => {
           console.error(e)
@@ -67,13 +72,16 @@
         })
 
       var isoLayer = null
+      var transitiveLayer = null
 
       var map = window.L.mapbox
         .map('map', 'conveyal.hml987j0', {
           accessToken: 'pk.eyJ1IjoiY29udmV5YWwiLCJhIjoiY2lndnI5cms4MHJ4Mnd3bTB4MzYycDc4NiJ9.C40M0KSYXGSX_IbbqN53Eg',
           tileLayer: {
             maxZoom: 18
-          }
+          },
+          inertia: false, // recommended when using a transitive layer
+          zoomAnimation: false
         })
         .setView([39.766667, -86.15], 12)
 
@@ -93,9 +101,9 @@
         console.time('fetching origin')
         fetch(`${baseUrl}/${origin.x | 0}/${origin.y | 0}.dat`)
           .then(res => res.arrayBuffer())
-          .then(origin => {
+          .then(originData => {
             console.timeEnd('fetching origin')
-            bc.setOrigin(origin)
+            bc.setOrigin(originData, origin.x, origin.y)
 
             console.time('generating surface')
             bc.generateSurface()
@@ -119,6 +127,25 @@
             console.error(err)
             console.error(err.stack)
           })
+      })
+
+      map.on('mousemove', function (e) {
+        var dest = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
+
+        console.time('transitive data')
+        var transitiveData = bc.generateTransitiveData(dest)
+        console.timeEnd('transitive data')
+
+        console.log(`${transitiveData.journeys.length} unique paths`)
+
+        if (transitiveLayer != null) {
+          map.removeLayer(transitiveLayer)
+        }
+
+        transitiveLayer = new L.TransitiveLayer(new Transitive({data: transitiveData}))
+        map.addLayer(transitiveLayer)
+        // see leaflet.transitivelayer issue #2
+        transitiveLayer._refresh()
       })
     </script>
   </body>
