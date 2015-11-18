@@ -134,6 +134,7 @@
 
         console.time('transitive data')
         var transitiveData = bc.generateTransitiveData(dest)
+        var transitive = new Transitive({data: transitiveData})
         console.timeEnd('transitive data')
 
         console.log(`${transitiveData.journeys.length} unique paths`)
@@ -142,7 +143,7 @@
           map.removeLayer(transitiveLayer)
         }
 
-        transitiveLayer = new L.TransitiveLayer(new Transitive({data: transitiveData}))
+        transitiveLayer = new L.TransitiveLayer(transitive)
         map.addLayer(transitiveLayer)
         // see leaflet.transitivelayer issue #2
         transitiveLayer._refresh()
