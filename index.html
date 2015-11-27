@@ -2,7 +2,8 @@
 <html>
   <head>
     <title>Static Site Output</title>
-    <link rel="stylesheet" href="https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css" />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css">
+    <link rel="stylesheet" href="node_modules/transitive-js/lib/transitive.css">
 
     <style type="text/css">
       html, body, #map {
@@ -86,67 +87,71 @@
         .setView([39.766667, -86.15], 12)
 
       map.on('click', function (e) {
-        // get the pixel coordinates
-        var origin = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
-        document.getElementById('location').value = `${origin.x | 0} / ${origin.y | 0}`
+        if (bc.isReady()) {
+          // get the pixel coordinates
+          var coordinates = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
+          document.getElementById('location').value = `${coordinates.x | 0} / ${coordinates.y | 0}`
 
-        if (!bc.coordinatesInQueryBounds(origin)) {
-          if (isoLayer) {
-            map.removeLayer(isoLayer)
-            isoLayer = null
-          }
-          return
-        }
-
-        console.time('fetching origin')
-        fetch(`${baseUrl}/${origin.x | 0}/${origin.y | 0}.dat`)
-          .then(res => res.arrayBuffer())
-          .then(originData => {
-            console.timeEnd('fetching origin')
-            bc.setOrigin(originData, origin.x, origin.y)
-
-            console.time('generating surface')
-            bc.generateSurface()
-            console.timeEnd('generating surface')
-
-            // Set the access output
-            document.getElementById('access').value = bc.getAccessibilityForCutoff()
-
-            if (isoLayer) map.removeLayer(isoLayer)
-
-            isoLayer = window.L.tileLayer.canvas()
-            isoLayer.drawTile = bc.drawTile.bind(bc)
-            isoLayer.addTo(map)
-          })
-          .catch(err => {
+          if (!bc.coordinatesInQueryBounds(coordinates)) {
             if (isoLayer) {
               map.removeLayer(isoLayer)
               isoLayer = null
             }
+            return
+          }
 
-            console.error(err)
-            console.error(err.stack)
-          })
+          console.time('fetching origin')
+          fetch(`${baseUrl}/${coordinates.x | 0}/${coordinates.y | 0}.dat`)
+            .then(res => res.arrayBuffer())
+            .then(data => {
+              console.timeEnd('fetching origin')
+              bc.setOrigin(data, coordinates)
+
+              console.time('generating surface')
+              bc.generateSurface()
+              console.timeEnd('generating surface')
+
+              // Set the access output
+              document.getElementById('access').value = bc.getAccessibilityForCutoff()
+
+              if (isoLayer) map.removeLayer(isoLayer)
+
+              isoLayer = window.L.tileLayer.canvas()
+              isoLayer.drawTile = bc.drawTile.bind(bc)
+              isoLayer.addTo(map)
+            })
+            .catch(err => {
+              if (isoLayer) {
+                map.removeLayer(isoLayer)
+                isoLayer = null
+              }
+
+              console.error(err)
+              console.error(err.stack)
+            })
+        }
       })
 
       map.on('mousemove', function (e) {
-        var dest = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
+        if (bc.isLoaded()) {
+          var dest = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
 
-        console.time('transitive data')
-        var transitiveData = bc.generateTransitiveData(dest)
-        var transitive = new Transitive({data: transitiveData})
-        console.timeEnd('transitive data')
+          console.time('transitive data')
+          var transitiveData = bc.generateTransitiveData(dest)
+          var transitive = new Transitive({data: transitiveData})
+          console.timeEnd('transitive data')
 
-        console.log(`${transitiveData.journeys.length} unique paths`)
+          console.log(`${transitiveData.journeys.length} unique paths`)
 
-        if (transitiveLayer != null) {
-          map.removeLayer(transitiveLayer)
+          if (transitiveLayer != null) {
+            map.removeLayer(transitiveLayer)
+          }
+
+          transitiveLayer = new L.TransitiveLayer(transitive)
+          map.addLayer(transitiveLayer)
+          // see leaflet.transitivelayer issue #2
+          transitiveLayer._refresh()
         }
-
-        transitiveLayer = new L.TransitiveLayer(transitive)
-        map.addLayer(transitiveLayer)
-        // see leaflet.transitivelayer issue #2
-        transitiveLayer._refresh()
       })
     </script>
   </body>
