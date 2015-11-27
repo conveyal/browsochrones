@@ -1,4 +1,9 @@
 
+### 0.0.5 — 2015-11-27
+
+* Add `isReady` and `isLoaded` functions.
+* Throw errors if Browoschrones is not ready or loaded.
+
 ### 0.0.4 — 2015-11-17
 
 * Utilizing new format, automatically compute access value.
