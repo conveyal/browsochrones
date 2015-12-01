@@ -1,4 +1,8 @@
 
+### 0.0.6 — 2015-12-01
+
+* Remove `Math.max` from `generateSurface` to get 4x increase in speed.
+
 ### 0.0.5 — 2015-11-27
 
 * Add `isReady` and `isLoaded` functions.
