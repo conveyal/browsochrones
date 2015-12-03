@@ -28,6 +28,18 @@
         font-size: 1.5em;
         font-weight: bold;
       }
+
+      #marey {
+        position: fixed;
+        width: 98%;
+        height: 250px;
+        bottom: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.5);
+        background: #fff;
+        z-index: 2000;
+        left: 1%;
+        right: 1%;
+      }
     </style>
   </head>
   <body>
@@ -39,6 +51,9 @@
       <output id="access"></output>
     </div>
 
+    <div id="marey">
+    </div>
+
     <script src="https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js"></script>
     <script src="node_modules/babel-polyfill/dist/polyfill.js"></script>
     <script src="build/index.js"></script>
@@ -46,6 +61,11 @@
       var fetch = require('isomorphic-fetch')
       var Transitive = require('transitive-js')
       require('leaflet-transitivelayer')
+      // react used for Marey plot
+      var React = require('react')
+      var ReactDOM = require('react-dom')
+      var Marey = require('marey').default
+      var MareyFactory = React.createFactory(Marey)
 
       var Browsochrone = require('browsochrones').default
 
@@ -151,6 +171,10 @@
           map.addLayer(transitiveLayer)
           // see leaflet.transitivelayer issue #2
           transitiveLayer._refresh()
+
+          // set up Marey plot
+          var marey = MareyFactory({browsochrones: bc, dest: dest})
+          ReactDOM.render(marey, document.getElementById('marey'))
         }
       })
     </script>

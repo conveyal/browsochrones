@@ -10,7 +10,8 @@
   "babel": {
     "presets": [
       "es2015",
-      "stage-0"
+      "stage-0",
+      "react"
     ]
   },
   "browserify": {
@@ -22,7 +23,7 @@
     "prepublish": "babel lib --out-dir build",
     "start": "npm run www & npm run watch",
     "test": "babel-node test/index.js",
-    "watch": "watchify -dv -t babelify -r isomorphic-fetch -r transitive-js -r leaflet-transitivelayer -r ./lib/index.js:browsochrones -o build/index.js",
+    "watch": "watchify -dv -t babelify -r isomorphic-fetch -r transitive-js -r leaflet-transitivelayer -r react -r react-dom -r ./lib/index.js:browsochrones -r ./lib/marey.js:marey   -o build/index.js",
     "www": "serve"
   },
   "author": "Conveyal",
@@ -32,6 +33,7 @@
     "babel-eslint": "^4.1.4",
     "babel-polyfill": "^6.0.16",
     "babel-preset-es2015": "^6.0.15",
+    "babel-preset-react": "^6.1.18",
     "babel-preset-stage-0": "^6.0.15",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
@@ -46,5 +48,9 @@
   },
   "standard": {
     "parser": "babel-eslint"
+  },
+  "dependencies": {
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3"
   }
 }
