@@ -1,4 +1,28 @@
 
+### 0.0.7 — 2015-12-10
+
+* Move marey into test/ for now.
+* Split up Marey rendering.
+* Base width on window.
+* Move react/react-dom into devDependencies.
+* Fix conveyal/r5#24
+* Fix typo in non-transit-time calculation.
+* Make pseudo color tiles bearably fast (#10)
+* Add configurable color scheme, default to pseudo color. fixes #10.
+* Label with route name not r5 internal pattern ID.
+* Fix #8 (overtaking trips, display bug)
+* Fix #11 (first stop in marey plot not used)
+* Label patterns in Marey plot.
+* Marey plots, now in living color.
+* Remove code that was inadvertently removing all walk-only paths.
+* -1 / 60 = 0, which meant that unreachable areas were becoming reachable. Fixes #6.
+* Remove incorrect use of bitwise operations, fixes #7.
+* Make Marey plot more readable.
+* Add readout on origin/destination location and number of rounds to Marey graph.
+* Add marey graph component, fixes #4.
+* Split getTransitiveData up into multiple functions, to allow implementation of #4.
+* De-delta-code times and pre-divide.
+
 ### 0.0.6 — 2015-12-01
 
 * Remove `Math.max` from `generateSurface` to get 4x increase in speed.
