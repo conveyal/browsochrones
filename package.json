@@ -23,7 +23,7 @@
     "prepublish": "babel lib --out-dir build",
     "start": "npm run www & npm run watch",
     "test": "babel-node test/index.js",
-    "watch": "watchify -dv -t babelify -r isomorphic-fetch -r transitive-js -r leaflet-transitivelayer -r react -r react-dom -r ./lib/index.js:browsochrones -r ./lib/marey.js:marey   -o build/index.js",
+    "watch": "watchify -dv -t babelify -r isomorphic-fetch -r transitive-js -r leaflet-transitivelayer -r react -r react-dom -r ./lib/index.js:browsochrones -r ./test/marey.js:marey   -o build/index.js",
     "www": "serve"
   },
   "author": "Conveyal",

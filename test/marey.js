@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import {getPaths, getPath} from './get-transitive-data'
+import {getPaths, getPath} from '../lib/get-transitive-data'
 import Color from 'color'
 
 const HEIGHT = 220
