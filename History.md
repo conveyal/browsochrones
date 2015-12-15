@@ -1,4 +1,8 @@
 
+### 0.0.8 — 2015-12-15
+
+* Make `color` a dependency.
+
 ### 0.0.7 — 2015-12-10
 
 * Move marey into test/ for now.
