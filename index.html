@@ -49,6 +49,18 @@
         background: #fff;
         z-index: 2000;
       }
+
+      #isochrone {
+        position: fixed;
+        left: 20px;
+        top: 20px;
+        z-index: 2001;
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.5),
+        width: 1200px;
+        height: 900px;
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -58,12 +70,15 @@
       <output id="location"></output>
       Jobs within 60 minutes
       <output id="access"></output>
+      <a href="#" id="show-isochrone">Show isochrone marching squares debug visualization</a>
     </div>
 
     <div id="lineMap"></div>
 
     <div id="marey">
     </div>
+
+    <div id="isochrone"></div>
 
     <script src="https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js"></script>
     <script src="node_modules/babel-polyfill/dist/polyfill.js"></script>
@@ -80,6 +95,9 @@
 
       var LineMap = require('schematic-line-map').default
       var LineMapFactory = React.createFactory(LineMap)
+
+      var ContourGrid = require('contour-grid').default
+      var ContourGridFactory = React.createFactory(ContourGrid)
 
       var Browsochrone = require('browsochrones').default
 
@@ -194,6 +212,15 @@
           var lineMap = LineMapFactory({data: transitiveData})
           ReactDOM.render(lineMap, document.getElementById('lineMap'))
         }
+      })
+
+      document.getElementById('show-isochrone').addEventListener('click', function () {
+        document.getElementById('isochrone').style.display = 'block'
+
+        var contourGrid = ContourGridFactory({surface: bc.surface, query: bc.query})
+        ReactDOM.render(contourGrid, document.getElementById('isochrone'))
+
+        return false;
       })
     </script>
   </body>
