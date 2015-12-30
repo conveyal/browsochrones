@@ -1,6 +1,6 @@
 {
   "name": "browsochrones",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Create isochrones and accessibility images in the browser",
   "main": "./build/index",
   "repository": {
@@ -30,7 +30,7 @@
   "license": "MIT",
   "dependencies": {
     "color": "^0.10.1",
-    "jsolines": "0.0.3  ",
+    "jsolines": "0.1.0  ",
     "json": "^9.0.3"
   },
   "devDependencies": {
