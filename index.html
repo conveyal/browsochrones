@@ -70,6 +70,7 @@
       <output id="location"></output>
       Jobs within 60 minutes
       <output id="access"></output>
+      <input type="range" min="0" max="120" value="60" id="isochrone-cutoff" />
       <a href="#" id="show-isochrone">Show isochrone marching squares debug visualization</a>
     </div>
 
@@ -124,6 +125,7 @@
           console.error(e.stack)
         })
 
+      var surfaceLayer = null
       var isoLayer = null
       var transitiveLayer = null
 
@@ -138,6 +140,24 @@
         })
         .setView([39.766667, -86.15], 12)
 
+      var updateIsoLayer = function () {
+        if (isoLayer) map.removeLayer(isoLayer)
+
+        var cutoff = document.getElementById('isochrone-cutoff').value
+
+        var iso = bc.getIsochrone(cutoff)
+        isoLayer = window.L.geoJson(iso,
+          {
+            style: {
+              weight: 3,
+              color: '#f00',
+              opacity: 1,
+              fillColor: '#222',
+              fillOpacity: 0.3
+            }
+          }).addTo(map)
+      }
+
       map.on('click', function (e) {
         if (bc.isReady()) {
           // get the pixel coordinates
@@ -145,10 +165,16 @@
           document.getElementById('location').value = `${coordinates.x | 0} / ${coordinates.y | 0}`
 
           if (!bc.coordinatesInQueryBounds(coordinates)) {
+            if (surfaceLayer) {
+              map.removeLayer(surfaceLayer)
+              surfaceLayer = null
+            }
+
             if (isoLayer) {
               map.removeLayer(isoLayer)
               isoLayer = null
             }
+
             return
           }
 
@@ -166,16 +192,19 @@
               // Set the access output
               document.getElementById('access').value = bc.getAccessibilityForCutoff()
 
+              if (surfaceLayer) map.removeLayer(surfaceLayer)
               if (isoLayer) map.removeLayer(isoLayer)
 
-              isoLayer = window.L.tileLayer.canvas()
-              isoLayer.drawTile = bc.drawTile.bind(bc)
-              isoLayer.addTo(map)
+              surfaceLayer = window.L.tileLayer.canvas()
+              surfaceLayer.drawTile = bc.drawTile.bind(bc)
+              surfaceLayer.addTo(map)
+
+              updateIsoLayer()
             })
             .catch(err => {
-              if (isoLayer) {
-                map.removeLayer(isoLayer)
-                isoLayer = null
+              if (surfaceLayer) {
+                map.removeLayer(surfaceLayer)
+                surfaceLayer = null
               }
 
               console.error(err)
@@ -221,6 +250,10 @@
         ReactDOM.render(contourGrid, document.getElementById('isochrone'))
 
         return false;
+      })
+
+      document.getElementById('isochrone-cutoff').addEventListener('input', function () {
+        updateIsoLayer()
       })
     </script>
   </body>
