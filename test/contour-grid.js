@@ -13,7 +13,7 @@ const HEX = '0123456789ABCDEF'
 
 // elements for various cases, unit scale
 const EDGE = { fill: '#f00' }
-const CENTER = { fill: '#000'}
+const CENTER = { fill: '#000' }
 const SVG_ELEMENTS = {
   0: <circle cx='0.5' cy='0.5' r='0.1' style={CENTER} />,
   1: <path d='M 0 0.5 L 0.5 1 L 0 1 Z' style={EDGE} />,
