@@ -70,7 +70,7 @@
       <output id="location"></output>
       Jobs within 60 minutes
       <output id="access"></output>
-      <input type="range" min="0" max="120" value="60" id="isochrone-cutoff" />
+      <input type="range" min="0" max="120" value="60" id="isochrone-cutoff" /><a href="#" id="isochrone-play">Play</a><br/>
       <a href="#" id="show-isochrone">Show isochrone marching squares debug visualization</a>
     </div>
 
@@ -254,6 +254,21 @@
 
       document.getElementById('isochrone-cutoff').addEventListener('input', function () {
         updateIsoLayer()
+      })
+
+      document.getElementById('isochrone-play').addEventListener('click', function () {
+        var slider = document.getElementById('isochrone-cutoff')
+        var minute = 0
+
+        var interval
+        interval = setInterval(function () {
+          slider.value = minute++
+          // trigger update
+          slider.dispatchEvent(new Event('input'))
+          if (minute > 120) clearInterval(interval)
+        })
+
+        return false;
       })
     </script>
   </body>
