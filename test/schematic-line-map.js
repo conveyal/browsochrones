@@ -118,7 +118,7 @@ class SchematicLineMap extends Component {
           }
 
           let fromY = (patternVerticalOffsets.get(s.pattern_id) + s.from_stop_index - minStopPerPattern.get(s.pattern_id)) * cellHeight
-          let toY = (patternVerticalOffsets.get(s.pattern_id) + s.to_stop_index   - minStopPerPattern.get(s.pattern_id)) * cellHeight
+          let toY = (patternVerticalOffsets.get(s.pattern_id) + s.to_stop_index - minStopPerPattern.get(s.pattern_id)) * cellHeight
           let x = patternHorizOffsets.get(s.pattern_id)
 
           ret.push(<line x2={x}
@@ -137,7 +137,7 @@ class SchematicLineMap extends Component {
           let route = routes.filter(r => r.route_id === routeId)[0].route_short_name
 
           let y = Math.min((fromY + toY) / 2, fromY + 55)
-          ret.push(<text x={x} y={y} 
+          ret.push(<text x={x} y={y}
             style={{fontFamily: 'sans', fontSize: '9pt', fill: '#66f'}}
             transform={`rotate(90 ${x} ${y})`}>
               {route}
