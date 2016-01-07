@@ -112,15 +112,13 @@
           fetch(`${baseUrl}/query.json`).then(res => res.json()),
           fetch(`${baseUrl}/stop_trees.dat`).then(res => res.arrayBuffer()),
           fetch(`${gridUrl}/Jobs_total.grid`).then(res => res.arrayBuffer()),
-          fetch(`${gridUrl}/Workers_total.grid`).then(res => res.arrayBuffer()),
           fetch(`${baseUrl}/transitive.json`).then(res => res.json())
         ])
         .then(res => {
           bc.setQuery(res[0])
           bc.setStopTrees(res[1])
-          bc.putGrid('jobs', res[2])
-          bc.putGrid('workers', res[3])
-          bc.setTransitiveNetwork(res[4])
+          bc.setGrid(res[2])
+          bc.setTransitiveNetwork(res[3])
         })
         .catch(e => {
           console.error(e)
@@ -192,7 +190,7 @@
               console.timeEnd('generating surface')
 
               // Set the access output
-              document.getElementById('access').value = bc.getAccessibilityForCutoff().get('jobs')
+              document.getElementById('access').value = bc.getAccessibilityForCutoff()
 
               if (surfaceLayer) map.removeLayer(surfaceLayer)
               if (isoLayer) map.removeLayer(isoLayer)
