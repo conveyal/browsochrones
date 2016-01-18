@@ -69,7 +69,11 @@
       X/Y
       <output id="location"></output>
       Jobs within 60 minutes
-      <output id="access"></output>
+      <output id="job-access"></output>
+
+      Workforce within 60 minutes
+      <output id="wf-access"></output>
+
       <input type="range" min="0" max="120" value="60" id="isochrone-cutoff" /><a href="#" id="isochrone-play">Play</a><br/>
       <a href="#" id="show-isochrone">Show isochrone marching squares debug visualization</a>
     </div>
@@ -101,24 +105,29 @@
       var ContourGridFactory = React.createFactory(ContourGrid)
 
       var Browsochrone = require('browsochrones').default
+      var Grid = Browsochrone.Grid
 
       var bc = new Browsochrone()
 
       var baseUrl = 'http://localhost:4567'
       var gridUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline-z9/intgrids'
 
+      var grids = new Map()
+
       Promise
         .all([
           fetch(`${baseUrl}/query.json`).then(res => res.json()),
           fetch(`${baseUrl}/stop_trees.dat`).then(res => res.arrayBuffer()),
           fetch(`${gridUrl}/Jobs_total.grid`).then(res => res.arrayBuffer()),
+          fetch(`${gridUrl}/Workers_total.grid`).then(res => res.arrayBuffer()),
           fetch(`${baseUrl}/transitive.json`).then(res => res.json())
         ])
         .then(res => {
           bc.setQuery(res[0])
           bc.setStopTrees(res[1])
-          bc.setGrid(res[2])
-          bc.setTransitiveNetwork(res[3])
+          grids.set('jobs', new Grid(res[2]))
+          grids.set('workers', new Grid(res[3]))
+          bc.setTransitiveNetwork(res[4])
         })
         .catch(e => {
           console.error(e)
@@ -190,7 +199,13 @@
               console.timeEnd('generating surface')
 
               // Set the access output
-              document.getElementById('access').value = bc.getAccessibilityForCutoff()
+              console.time('job access')
+              document.getElementById('job-access').value = Math.round(bc.getAccessibilityForGrid(grids.get('jobs')))
+              console.timeEnd('job access')
+
+              console.time('workforce access')
+              document.getElementById('wf-access').value = Math.round(bc.getAccessibilityForGrid(grids.get('workers')))
+              console.timeEnd('workforce access')
 
               if (surfaceLayer) map.removeLayer(surfaceLayer)
               if (isoLayer) map.removeLayer(isoLayer)
