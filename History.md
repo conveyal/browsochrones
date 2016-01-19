@@ -1,4 +1,18 @@
 
+### 0.0.10 — 2016-01-19
+
+  * Rename accessibilityFor{Cutoff => Grid} to better match what the function does now.
+  * Allow calculating accessibility for arbitrary grids after surfaces have been generated.
+  * Make leaflet a devDepenency
+  * Only calculate accessibility for one variable at a time.
+  * Move assignment so it happens less often.
+  * Switch to using integer grids.
+  * Improve code readability (and speed, slightly)
+  * Work with multiple grids simultaneously.
+  * Update grid url.
+  * Add play button to show expanding isochrone animation, purely for fun.
+  * Fix lint errors.
+
 ### 0.0.8 — 2015-12-15
 
 * Make `color` a dependency.
