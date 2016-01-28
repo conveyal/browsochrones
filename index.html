@@ -189,7 +189,7 @@
 
           console.time('fetching origin')
           fetch(baseUrl + '/' + (coordinates.x | 0) + '/' + (coordinates.y | 0) + '.dat')
-            .then(function (res) { res.arrayBuffer() })
+            .then(function (res) { return res.arrayBuffer() })
             .then(function (data) {
               console.timeEnd('fetching origin')
               bc.setOrigin(data, coordinates)
