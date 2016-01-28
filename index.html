@@ -116,20 +116,20 @@
 
       Promise
         .all([
-          fetch(`${baseUrl}/query.json`).then(res => res.json()),
-          fetch(`${baseUrl}/stop_trees.dat`).then(res => res.arrayBuffer()),
-          fetch(`${gridUrl}/Jobs_total.grid`).then(res => res.arrayBuffer()),
-          fetch(`${gridUrl}/Workers_total.grid`).then(res => res.arrayBuffer()),
-          fetch(`${baseUrl}/transitive.json`).then(res => res.json())
+          fetch(baseUrl + '/query.json').then(function (res) { return res.json() }),
+          fetch(baseUrl + '/stop_trees.dat').then(function (res) { return res.arrayBuffer() }),
+          fetch(gridUrl + '/Jobs_total.grid').then(function (res) { return res.arrayBuffer() }),
+          fetch(gridUrl + '/Workers_total.grid').then(function (res) { return res.arrayBuffer() }),
+          fetch(baseUrl + '/transitive.json').then(function (res) { return res.json() })
         ])
-        .then(res => {
+        .then(function (res) {
           bc.setQuery(res[0])
           bc.setStopTrees(res[1])
           grids.set('jobs', new Grid(res[2]))
           grids.set('workers', new Grid(res[3]))
           bc.setTransitiveNetwork(res[4])
         })
-        .catch(e => {
+        .catch(function (e) {
           console.error(e)
           console.error(e.stack)
         })
@@ -171,7 +171,7 @@
         if (bc.isReady()) {
           // get the pixel coordinates
           var coordinates = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
-          document.getElementById('location').value = `${coordinates.x | 0} / ${coordinates.y | 0}`
+          document.getElementById('location').value = coordinates.x | 0 + '/' + coordinates.y | 0
 
           if (!bc.coordinatesInQueryBounds(coordinates)) {
             if (surfaceLayer) {
@@ -188,9 +188,9 @@
           }
 
           console.time('fetching origin')
-          fetch(`${baseUrl}/${coordinates.x | 0}/${coordinates.y | 0}.dat`)
-            .then(res => res.arrayBuffer())
-            .then(data => {
+          fetch(baseUrl + '/' + coordinates.x | 0 + '/' + coordinates.y | 0 + '.dat')
+            .then(function (res) { res.arrayBuffer() })
+            .then(function (data) {
               console.timeEnd('fetching origin')
               bc.setOrigin(data, coordinates)
 
@@ -216,7 +216,7 @@
 
               updateIsoLayer()
             })
-            .catch(err => {
+            .catch(function (err) {
               if (surfaceLayer) {
                 map.removeLayer(surfaceLayer)
                 surfaceLayer = null
@@ -237,7 +237,7 @@
           var transitive = new Transitive({data: transitiveData})
           console.timeEnd('transitive data')
 
-          console.log(`${transitiveData.journeys.length} unique paths`)
+          console.log(transitiveData.journeys.length + ' unique paths')
 
           if (transitiveLayer != null) {
             map.removeLayer(transitiveLayer)
