@@ -1,4 +1,13 @@
 
+### 0.0.11 — 2016-01-28
+
+  * Fix arrow function conversion to return the value
+  * Fix string interpolation
+  * Don't use ES6 in the index.html
+  * Always bind drawTile, closes #20
+  * Fix schematic map so it doesn't crash.
+  * Cluster routes.
+
 ### 0.0.10 — 2016-01-19
 
   * Rename accessibilityFor{Cutoff => Grid} to better match what the function does now.
