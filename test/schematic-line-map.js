@@ -69,8 +69,6 @@ class SchematicLineMap extends Component {
     // we're trying to minimize the number of patterns that have transfers that go the wrong way in the plot
     let objective = this.calculateObjective(patternVerticalOffsets, minStopPerPattern, maxStopPerPattern, transfersFromPattern)
     for (let i = 0; ; i++) {
-      console.log(`objective value ${objective} after ${i} iterations`)
-
       // greedily attempt to improve
       let improved = false
 
@@ -86,6 +84,11 @@ class SchematicLineMap extends Component {
           // restore it
           patternVerticalOffsets.set(pattern, off)
         }
+      }
+
+      if (i > 100) {
+        console.log('ending optimization after 100 iterations even though convergence has not been reached')
+        break
       }
 
       if (!improved || objective === 0) break
