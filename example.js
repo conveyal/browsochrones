@@ -105,26 +105,29 @@ map.on('click', function (e) {
         bc.setOrigin(data, coordinates)
 
         console.time('generating surface')
-        bc.generateSurface()
-        console.timeEnd('generating surface')
+        bc.generateSurface().then(surface => {
+          console.timeEnd('generating surface')
 
-        // Set the access output
-        console.time('job access')
-        document.getElementById('job-access').value = Math.round(bc.getAccessibilityForGrid(grids.get('jobs')))
-        console.timeEnd('job access')
+          // Set the access output
+          console.time('job access')
+          document.getElementById('job-access').value = Math.round(bc.getAccessibilityForGrid(grids.get('jobs')))
+          console.timeEnd('job access')
 
-        console.time('workforce access')
-        document.getElementById('wf-access').value = Math.round(bc.getAccessibilityForGrid(grids.get('workers')))
-        console.timeEnd('workforce access')
+          console.time('workforce access')
+          document.getElementById('wf-access').value = Math.round(bc.getAccessibilityForGrid(grids.get('workers')))
+          console.timeEnd('workforce access')
 
-        if (surfaceLayer) map.removeLayer(surfaceLayer)
-        if (isoLayer) map.removeLayer(isoLayer)
+          if (surfaceLayer) map.removeLayer(surfaceLayer)
+          if (isoLayer) map.removeLayer(isoLayer)
 
-        surfaceLayer = window.L.tileLayer.canvas()
-        surfaceLayer.drawTile = bc.drawTile.bind(bc)
-        surfaceLayer.addTo(map)
+          surfaceLayer = window.L.tileLayer.canvas()
+          surfaceLayer.drawTile = bc.drawTile.bind(bc)
+          surfaceLayer.addTo(map)
 
-        updateIsoLayer()
+          updateIsoLayer()
+        }).catch(err => {
+          console.error(err)
+        })
       })
       .catch(function (err) {
         if (surfaceLayer) {
