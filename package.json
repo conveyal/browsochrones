@@ -18,13 +18,10 @@
     "transform": "babelify"
   },
   "scripts": {
-    "build": "browserify lib/index.js > build/index.js",
     "lint": "standard",
     "prepublish": "babel lib --out-dir build",
-    "start": "npm run www & npm run watch",
-    "test": "babel-node test/index.js",
-    "watch": "watchify -dv -t babelify -r isomorphic-fetch -r transitive-js -r leaflet-transitivelayer -r react -r react-dom -r ./lib/index.js:browsochrones -r ./test/marey.js:marey -r ./test/schematic-line-map.js:schematic-line-map -r ./test/contour-grid.js:contour-grid -o build/index.js",
-    "www": "serve"
+    "start": "budo example.js --live --verbose",
+    "test": "babel-node test/index.js"
   },
   "author": "Conveyal",
   "license": "MIT",
@@ -42,18 +39,17 @@
     "babel-preset-react": "^6.1.18",
     "babel-preset-stage-0": "^6.3.13",
     "babelify": "^7.2.0",
-    "browserify": "^12.0.1",
+    "budo": "^8.0.2",
     "concat-stream": "^1.5.1",
     "isomorphic-fetch": "^2.2.0",
-    "leaflet": "^0.7.7",
     "leaflet-transitivelayer": "^0.1.0",
+    "mapbox.js": "^2.2.4",
+    "normalize.css": "^3.0.3",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
-    "serve": "^1.4.0",
     "standard": "^5.3.1",
     "tape": "^4.2.2",
-    "transitive-js": "^0.8.2",
-    "watchify": "^3.2.0"
+    "transitive-js": "^0.8.2"
   },
   "standard": {
     "parser": "babel-eslint"
