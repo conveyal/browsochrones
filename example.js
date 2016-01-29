@@ -15,7 +15,6 @@ var ContourGrid = require('./test/contour-grid').default
 var ContourGridFactory = React.createFactory(ContourGrid)
 
 var Browsochrone = require('./lib').default
-var Grid = Browsochrone.Grid
 
 var bc = new Browsochrone()
 
@@ -35,8 +34,8 @@ Promise
   .then(function (res) {
     bc.setQuery(res[0])
     bc.setStopTrees(res[1])
-    grids.set('jobs', new Grid(res[2]))
-    grids.set('workers', new Grid(res[3]))
+    grids.set('jobs', Browsochrone.createGrid(res[2]))
+    grids.set('workers', Browsochrone.createGrid(res[3]))
     bc.setTransitiveNetwork(res[4])
   })
   .catch(function (e) {
