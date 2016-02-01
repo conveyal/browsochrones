@@ -3,7 +3,6 @@
  */
 
 import React, {Component, PropTypes} from 'react'
-import {getContour} from 'jsolines'
 
 const WIDTH = 1200
 const HEIGHT = 900
@@ -35,18 +34,11 @@ const SVG_ELEMENTS = {
 
 class ContourGrid extends Component {
   static propTypes = {
-    surface: PropTypes.object.isRequired,
+    contour: PropTypes.object.isRequired,
     query: PropTypes.object.isRequired
   }
 
   render () {
-    let contour = getContour({
-      surface: this.props.surface.surface,
-      width: this.props.query.width,
-      height: this.props.query.height,
-      cutoff: 60
-    })
-
     let elements = []
 
     // contour grid is one pixel smaller in each dimension
@@ -57,7 +49,7 @@ class ContourGrid extends Component {
 
     for (let y = 0, pixel = 0; y < contourHeight; y++) {
       for (let x = 0; x < contourWidth; x++, pixel++) {
-        let idx = contour[pixel]
+        let idx = this.props.contour[pixel]
 
         elements.push(
           <g transform={`scale(${cellWidth} ${cellHeight}) translate(${x} ${y})`} key={pixel}>

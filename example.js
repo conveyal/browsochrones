@@ -140,17 +140,17 @@ map.on('click', async function (e) {
 
 map.on('mousemove', async function (e) {
   if (bc.isLoaded()) {
-    var dest = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
+    const dest = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
 
     console.time('transitive data')
     try {
       const transitiveData = await bc.generateTransitiveData(dest)
-      var transitive = new Transitive({data: transitiveData})
+      const transitive = new Transitive({data: transitiveData})
       console.timeEnd('transitive data')
 
       console.log(transitiveData.journeys.length + ' unique paths')
 
-      if (transitiveLayer != null) {
+      if (transitiveLayer !== null) {
         map.removeLayer(transitiveLayer)
       }
 
@@ -159,12 +159,26 @@ map.on('mousemove', async function (e) {
       // see leaflet.transitivelayer issue #2
       transitiveLayer._refresh()
 
+      let { paths, times } = await bc.getPaths(dest)
+
+      // they come out of r5 backwards
+      times.reverse()
+      paths.reverse()
+
+      // clear the ones that are the same and arrive at the same time
+      for (let p = 0; p < paths.length - 1; p++) {
+        // + 1: time is offset one minute (wait one minute and take the trip at the next minute)
+        if (times[p] === times[p + 1] + 1 && paths[p][0] === paths[p + 1][0] && paths[p][1] === paths[p + 1][1]) paths[p] = undefined
+      }
+
+      paths = await Promise.all(paths.filter(p => !!p).map(path => bc.getPath(path)))
+
       // set up Marey plot
-      var marey = MareyFactory({browsochrones: bc, dest: dest})
+      const marey = MareyFactory({dest, paths, times, transitiveData})
       ReactDOM.render(marey, document.getElementById('marey'))
 
       // and schematic line map
-      var lineMap = LineMapFactory({data: transitiveData})
+      const lineMap = LineMapFactory({data: transitiveData})
       ReactDOM.render(lineMap, document.getElementById('lineMap'))
     } catch (e) {
       console.error(e)
@@ -172,10 +186,10 @@ map.on('mousemove', async function (e) {
   }
 })
 
-document.getElementById('show-isochrone').addEventListener('click', function () {
+document.getElementById('show-isochrone').addEventListener('click', async function () {
   document.getElementById('isochrone').style.display = 'block'
 
-  var contourGrid = ContourGridFactory({surface: bc.surface, query: bc.query})
+  const contourGrid = ContourGridFactory({contour: await bc.getContour(), query: bc.query})
   ReactDOM.render(contourGrid, document.getElementById('isochrone'))
 
   return false
@@ -186,11 +200,10 @@ document.getElementById('isochrone-cutoff').addEventListener('input', function (
 })
 
 document.getElementById('isochrone-play').addEventListener('click', function () {
-  var slider = document.getElementById('isochrone-cutoff')
-  var minute = 0
+  const slider = document.getElementById('isochrone-cutoff')
+  let minute = 0
 
-  var interval
-  interval = setInterval(function () {
+  const interval = setInterval(function () {
     slider.value = minute++
     // trigger update
     slider.dispatchEvent(new Event('input'))
