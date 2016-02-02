@@ -59,6 +59,7 @@ const map = L.mapbox
   .setView([39.766667, -86.15], 12)
 
 async function updateIsoLayer () {
+  console.log('updateIsoLayer')
   if (isoLayer) map.removeLayer(isoLayer)
 
   const cutoff = document.getElementById('isochrone-cutoff').value
@@ -125,7 +126,7 @@ map.on('click', async function (e) {
       surfaceLayer.drawTile = bc.drawTile.bind(bc)
       surfaceLayer.addTo(map)
 
-      await updateIsoLayer()
+      updateIsoLayer()
     } catch (err) {
       if (surfaceLayer) {
         map.removeLayer(surfaceLayer)
