@@ -32,7 +32,7 @@
     "color": "^0.10.1",
     "jsolines": "0.1.0  ",
     "json": "^9.0.3",
-    "uuid": "^2.0.1"
+    "web-worker-promise-interface": "^0.0.2"
   },
   "devDependencies": {
     "babel": "^6.3.26",
@@ -54,8 +54,7 @@
     "react-dom": "^0.14.3",
     "standard": "^5.3.1",
     "tape": "^4.2.2",
-    "transitive-js": "^0.8.2",
-    "webworkify": "^1.1.0"
+    "transitive-js": "^0.8.2"
   },
   "standard": {
     "parser": "babel-eslint"
