@@ -24,6 +24,8 @@ var gridUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline-z9/intgrids'
 
 var grids = new Map()
 
+var map
+
 Promise
   .all([
     fetch(baseUrl + '/query.json').then(function (res) { return res.json() }),
@@ -38,6 +40,9 @@ Promise
     grids.set('jobs', new Grid(res[2]))
     grids.set('workers', new Grid(res[3]))
     bc.setTransitiveNetwork(res[4])
+
+    var query = res[0]
+    map.setView(map.unproject([query.west + query.width / 2, query.north + query.height / 2], query.zoom), 11)
   })
   .catch(function (e) {
     console.error(e)
@@ -48,7 +53,7 @@ var surfaceLayer = null
 var isoLayer = null
 var transitiveLayer = null
 
-var map = window.L.mapbox
+map = window.L.mapbox
   .map('map', 'conveyal.hml987j0', {
     accessToken: 'pk.eyJ1IjoiY29udmV5YWwiLCJhIjoiY2lndnI5cms4MHJ4Mnd3bTB4MzYycDc4NiJ9.C40M0KSYXGSX_IbbqN53Eg',
     tileLayer: {
