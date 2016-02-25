@@ -33,6 +33,8 @@
     "debug": "^2.2.0",
     "jsolines": "0.1.0  ",
     "json": "^9.0.3",
+    "lodash.fill": "^3.3.2",
+    "lodash.slice": "^4.0.2",
     "web-worker-promise-interface": "^0.0.2"
   },
   "devDependencies": {
@@ -49,6 +51,7 @@
     "concat-stream": "^1.5.1",
     "isomorphic-fetch": "^2.2.0",
     "leaflet-transitivelayer": "^0.1.0",
+    "lodash.reverse": "^4.0.1",
     "mapbox.js": "^2.2.4",
     "normalize.css": "^3.0.3",
     "react": "^0.14.3",

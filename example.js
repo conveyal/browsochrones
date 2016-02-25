@@ -5,6 +5,8 @@ require('leaflet-transitivelayer')
 // react used for Marey plot
 var React = require('react')
 var ReactDOM = require('react-dom')
+var reverse = require('lodash.reverse')
+
 var Marey = require('./test/marey').default
 var MareyFactory = React.createFactory(Marey)
 
@@ -163,8 +165,8 @@ map.on('mousemove', async function (e) {
       let { paths, times } = await bc.getPaths(dest)
 
       // they come out of r5 backwards
-      times.reverse()
-      paths.reverse()
+      reverse(times)
+      reverse(paths)
 
       // clear the ones that are the same and arrive at the same time
       for (let p = 0; p < paths.length - 1; p++) {
