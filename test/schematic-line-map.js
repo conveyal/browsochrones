@@ -1,6 +1,9 @@
 /** A simple schematic map of all of the trips in a Transitive.js dataset */
 
+import dbg from 'debug'
 import React, {Component, PropTypes} from 'react'
+
+const debug = dbg('browsochrones:schematic-line-map')
 
 // vertical schematic
 const WIDTH = 220
@@ -37,7 +40,7 @@ class SchematicLineMap extends Component {
     })
 
     let nPatterns = usedStopsPerPattern.size
-    console.log(`${nPatterns} used in search`)
+    debug(`${nPatterns} used in search`)
 
     // figure out where each pattern is horizontally
     let patternHorizOffsets = new Map()
@@ -87,7 +90,7 @@ class SchematicLineMap extends Component {
       }
 
       if (i > 100) {
-        console.log('ending optimization after 100 iterations even though convergence has not been reached')
+        debug('ending optimization after 100 iterations even though convergence has not been reached')
         break
       }
 
