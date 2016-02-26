@@ -1,6 +1,6 @@
 {
   "name": "browsochrones",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "description": "Create isochrones and accessibility images in the browser",
   "main": "./build/index",
   "repository": {

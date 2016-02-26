@@ -1,4 +1,9 @@
 
+### 0.1.0 — 2016-02-26
+
+  * Promisify interface.
+  * Move processing to WebWorkers.
+
 ### 0.0.11 — 2016-01-28
 
   * Fix arrow function conversion to return the value
