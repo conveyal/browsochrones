@@ -19,6 +19,7 @@ var ContourGridFactory = React.createFactory(ContourGrid)
 var Browsochrone = require('./lib').default
 
 const bc = new Browsochrone()
+const bc2 = new Browsochrone()
 
 const baseUrl = 'http://localhost:4567'
 const gridUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline-z9/intgrids'
@@ -35,10 +36,16 @@ Promise
   ])
   .then(function (res) {
     bc.setQuery(res[0])
-    bc.setStopTrees(res[1])
+    bc.setStopTrees(res[1].slice(0))
     grids.set('jobs', res[2])
     grids.set('workers', res[3])
     bc.setTransitiveNetwork(res[4])
+
+    bc2.setQuery(res[0])
+    bc2.setStopTrees(res[1].slice(0))
+    bc2.setTransitiveNetwork(res[4])
+
+    console.log('loaded')
   })
   .catch(function (e) {
     console.error(e)
@@ -104,11 +111,15 @@ map.on('click', async function (e) {
       const response = await fetch(baseUrl + '/' + (coordinates.x | 0) + '/' + (coordinates.y | 0) + '.dat')
       const data = await response.arrayBuffer()
       console.timeEnd('fetching origin')
-      await bc.setOrigin(data, coordinates)
+      await bc.setOrigin(data.slice(0), coordinates)
+      await bc2.setOrigin(data.slice(0), coordinates)
 
       console.time('generating surface')
+      console.time('generating both surfaces')
       await bc.generateSurface()
       console.timeEnd('generating surface')
+      await bc2.generateSurface()
+      console.timeEnd('generating both surfaces')
 
       // Set the access output
       console.time('job access')
