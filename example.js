@@ -26,6 +26,17 @@ const gridUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline-z9/intgrid
 
 const grids = new Map()
 
+const map = L.mapbox
+  .map('map', 'conveyal.hml987j0', {
+    accessToken: 'pk.eyJ1IjoiY29udmV5YWwiLCJhIjoiY2lndnI5cms4MHJ4Mnd3bTB4MzYycDc4NiJ9.C40M0KSYXGSX_IbbqN53Eg',
+    tileLayer: {
+      maxZoom: 18
+    },
+    inertia: false, // recommended when using a transitive layer
+    zoomAnimation: false
+  })
+  .setView([39.766667, -86.15], 12)
+
 Promise
   .all([
     fetch(baseUrl + '/query.json').then(function (res) { return res.json() }),
@@ -46,6 +57,8 @@ Promise
     bc2.setTransitiveNetwork(res[4])
 
     console.log('loaded')
+    var query = res[0]
+    map.setView(map.unproject([query.west + query.width / 2, query.north + query.height / 2], query.zoom), 11)
   })
   .catch(function (e) {
     console.error(e)
@@ -55,17 +68,6 @@ Promise
 var surfaceLayer = null
 var isoLayer = null
 var transitiveLayer = null
-
-const map = L.mapbox
-  .map('map', 'conveyal.hml987j0', {
-    accessToken: 'pk.eyJ1IjoiY29udmV5YWwiLCJhIjoiY2lndnI5cms4MHJ4Mnd3bTB4MzYycDc4NiJ9.C40M0KSYXGSX_IbbqN53Eg',
-    tileLayer: {
-      maxZoom: 18
-    },
-    inertia: false, // recommended when using a transitive layer
-    zoomAnimation: false
-  })
-  .setView([39.766667, -86.15], 12)
 
 async function updateIsoLayer () {
   console.log('updateIsoLayer')
