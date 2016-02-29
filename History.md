@@ -1,4 +1,9 @@
 
+### 0.1.1 — 2016-02-29
+
+  * Add `babel-plugin-add-module-exports`.
+  * Update `web-worker-promise-interface`.
+
 ### 0.1.0 — 2016-02-26
 
   * Promisify interface.

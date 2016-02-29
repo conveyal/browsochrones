@@ -7,16 +7,16 @@ var React = require('react')
 var ReactDOM = require('react-dom')
 var reverse = require('lodash.reverse')
 
-var Marey = require('./test/marey').default
+var Marey = require('./test/marey')
 var MareyFactory = React.createFactory(Marey)
 
-var LineMap = require('./test/schematic-line-map').default
+var LineMap = require('./test/schematic-line-map')
 var LineMapFactory = React.createFactory(LineMap)
 
-var ContourGrid = require('./test/contour-grid').default
+var ContourGrid = require('./test/contour-grid')
 var ContourGridFactory = React.createFactory(ContourGrid)
 
-var Browsochrone = require('./lib').default
+var Browsochrone = require('./lib')
 
 const bc = new Browsochrone()
 const bc2 = new Browsochrone()
