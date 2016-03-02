@@ -1,4 +1,9 @@
 
+### 0.2.0 — 2016-03-02
+
+  * Renamed all `coordinates` to `point` following `lonlng` rules.
+  * Create `generateDestinationData` that retrieves transitive data, paths, and travel time for a destination.
+
 ### 0.1.1 — 2016-02-29
 
   * Add `babel-plugin-add-module-exports`.
