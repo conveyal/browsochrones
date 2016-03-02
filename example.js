@@ -91,10 +91,10 @@ async function updateIsoLayer () {
 map.on('click', async function (e) {
   if (bc.isReady()) {
     // get the pixel coordinates
-    var coordinates = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
-    document.getElementById('location').value = (coordinates.x | 0) + '/' + (coordinates.y | 0)
+    var point = bc.pixelToOriginPoint(map.project(e.latlng), map.getZoom())
+    document.getElementById('location').value = (point.x | 0) + '/' + (point.y | 0)
 
-    if (!bc.coordinatesInQueryBounds(coordinates)) {
+    if (!bc.pointInQueryBounds(point)) {
       if (surfaceLayer) {
         map.removeLayer(surfaceLayer)
         surfaceLayer = null
@@ -110,11 +110,11 @@ map.on('click', async function (e) {
 
     console.time('fetching origin')
     try {
-      const response = await fetch(baseUrl + '/' + (coordinates.x | 0) + '/' + (coordinates.y | 0) + '.dat')
+      const response = await fetch(baseUrl + '/' + (point.x | 0) + '/' + (point.y | 0) + '.dat')
       const data = await response.arrayBuffer()
       console.timeEnd('fetching origin')
-      await bc.setOrigin(data.slice(0), coordinates)
-      await bc2.setOrigin(data.slice(0), coordinates)
+      await bc.setOrigin(data.slice(0), point)
+      await bc2.setOrigin(data.slice(0), point)
 
       console.time('generating surface')
       console.time('generating both surfaces')
@@ -156,11 +156,11 @@ map.on('click', async function (e) {
 
 map.on('mousemove', async function (e) {
   if (bc.isLoaded()) {
-    const dest = bc.pixelToOriginCoordinates(map.project(e.latlng), map.getZoom())
+    const point = bc.pixelToOriginPoint(map.project(e.latlng), map.getZoom())
 
     console.time('transitive data')
     try {
-      const transitiveData = await bc.generateTransitiveData(dest)
+      const transitiveData = await bc.generateTransitiveData(point)
       const transitive = new Transitive({data: transitiveData})
       console.timeEnd('transitive data')
 
@@ -175,7 +175,7 @@ map.on('mousemove', async function (e) {
       // see leaflet.transitivelayer issue #2
       transitiveLayer._refresh()
 
-      let { paths, times } = await bc.getPaths(dest)
+      let { paths, times } = await bc.getPaths(point)
 
       // they come out of r5 backwards
       reverse(times)
@@ -190,7 +190,7 @@ map.on('mousemove', async function (e) {
       paths = await Promise.all(paths.filter(p => !!p).map(path => bc.getPath(path)))
 
       // set up Marey plot
-      const marey = MareyFactory({dest, paths, times, transitiveData})
+      const marey = MareyFactory({dest: point, paths, times, transitiveData})
       ReactDOM.render(marey, document.getElementById('marey'))
 
       // and schematic line map
