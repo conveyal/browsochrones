@@ -160,7 +160,9 @@ map.on('mousemove', async function (e) {
 
     console.time('transitive data')
     try {
-      const transitiveData = await bc.generateTransitiveData(point)
+      const data = await bc.generateDestinationData(point)
+      console.log(data)
+      const transitiveData = data.transitive
       const transitive = new Transitive({data: transitiveData})
       console.timeEnd('transitive data')
 
@@ -175,7 +177,7 @@ map.on('mousemove', async function (e) {
       // see leaflet.transitivelayer issue #2
       transitiveLayer._refresh()
 
-      let { paths, times } = await bc.getPaths(point)
+      let { paths, times } = data.paths
 
       // they come out of r5 backwards
       reverse(times)
