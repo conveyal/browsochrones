@@ -1,4 +1,19 @@
 
+### 0.2.0 — 2016-03-02
+
+  * Renamed all `coordinates` to `point` following `lonlng` rules.
+  * Create `generateDestinationData` that retrieves transitive data, paths, and travel time for a destination.
+
+### 0.1.1 — 2016-02-29
+
+  * Add `babel-plugin-add-module-exports`.
+  * Update `web-worker-promise-interface`.
+
+### 0.1.0 — 2016-02-26
+
+  * Promisify interface.
+  * Move processing to WebWorkers.
+
 ### 0.0.11 — 2016-01-28
 
   * Fix arrow function conversion to return the value

@@ -4,30 +4,15 @@
  */
 
 import React from 'react'
-import {getPaths, getPath} from '../lib/get-transitive-data'
 import Color from 'color'
 
 const HEIGHT = 220
 
-function Marey ({ browsochrones, dest }) {
+function Marey ({ dest, paths, times, transitiveData }) {
   const WIDTH = window.innerWidth - 20
 
   // figure out how many unique stops there are in each round
   const stopsPerRound = []
-  let { paths, times } = getPaths({origin: browsochrones.origin, to: dest, stopTreeCache: browsochrones.stopTrees, query: browsochrones.query})
-
-  // they come out of r5 backwards
-  times.reverse()
-  paths.reverse()
-
-  // clear the ones that are the same and arrive at the same time
-  for (let p = 0; p < paths.length - 1; p++) {
-    // + 1: time is offset one minute (wait one minute and take the trip at the next minute)
-    if (times[p] === times[p + 1] + 1 && paths[p][0] === paths[p + 1][0] && paths[p][1] === paths[p + 1][1]) paths[p] = undefined
-  }
-
-  paths = paths.map(path => path === undefined ? undefined : getPath({ pathDescriptor: path, origin: browsochrones.origin }))
-
   const pathSet = new Set(paths.filter(path => path !== undefined))
 
   // find the right-most time
@@ -94,12 +79,20 @@ function Marey ({ browsochrones, dest }) {
     <svg style={{width: WIDTH + 'px', height: HEIGHT + 'px'}}>
       {horizontalLinesPerRound}
       {horizontalLinesPerStop}
-      <MareyLines browsochrones={browsochrones} maxTime={maxTime} paths={paths} stopsPerRound={stopsPerRound} stopOffsets={stopOffsets} times={times} width={WIDTH} />
+      <MareyLines
+        maxTime={maxTime}
+        paths={paths}
+        stopsPerRound={stopsPerRound}
+        stopOffsets={stopOffsets}
+        times={times}
+        transitiveData={transitiveData}
+        width={WIDTH}
+        />
     </svg>
   )
 }
 
-function MareyLines ({browsochrones, maxTime, paths, stopsPerRound, stopOffsets, times, width}) {
+function MareyLines ({maxTime, paths, stopsPerRound, stopOffsets, times, transitiveData, width}) {
   const col = Color('#b00')
 
   return <g>{paths.map((path, min) => {
@@ -134,8 +127,8 @@ function MareyLines ({browsochrones, maxTime, paths, stopsPerRound, stopOffsets,
       const rot = Math.atan(dY / dX) * 180 / Math.PI
 
       const pat = path[round][1] + ''
-      const routeId = browsochrones.transitiveData.patterns.find(p => p.pattern_id === pat).route_id
-      const route = browsochrones.transitiveData.routes.find(r => r.route_id === routeId).route_short_name
+      const routeId = transitiveData.patterns.find(p => p.pattern_id === pat).route_id
+      const route = transitiveData.routes.find(r => r.route_id === routeId).route_short_name
 
       return (
         <g key={round}>
