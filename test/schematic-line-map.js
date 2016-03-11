@@ -26,15 +26,22 @@ class SchematicLineMap extends Component {
 
     journeys.forEach(function (j) {
       j.segments.filter(s => s.type === 'TRANSIT').forEach((s, i, a) => {
-        if (!usedStopsPerPattern.has(s.pattern_id)) usedStopsPerPattern.set(s.pattern_id, new Set())
+        let patId = s.pattern_id != null ? s.pattern_id : s.patterns[0].pattern_id
+        let fromStop = s.pattern_id != null ? s.from_stop_index : s.patterns[0].from_stop_index
+        let toStop = s.pattern_id != null ? s.to_stop_index : s.patterns[0].to_stop_index
 
-        usedStopsPerPattern.get(s.pattern_id).add(s.from_stop_index)
-        usedStopsPerPattern.get(s.pattern_id).add(s.to_stop_index)
+        if (!usedStopsPerPattern.has(patId)) usedStopsPerPattern.set(patId, new Set())
+
+        usedStopsPerPattern.get(patId).add(fromStop)
+        usedStopsPerPattern.get(patId).add(toStop)
 
         if (i < a.length - 1) {
-          if (!transfersFromPattern.has(s.pattern_id)) transfersFromPattern.set(s.pattern_id, [])
+          if (!transfersFromPattern.has(patId)) transfersFromPattern.set(patId, [])
 
-          transfersFromPattern.get(s.pattern_id).push({ fromStop: s.to_stop_index, toPattern: a[i + 1].pattern_id, toStop: a[i + 1].from_stop_index })
+          let toPattern = a[i + 1].pattern_id ? a[i + 1].pattern_id : a[i + 1].patterns[0].pattern_id
+          let transferStop = a[i + 1].pattern_id ? a[i + 1].from_stop_index : a[i + 1].patterns[0].from_stop_index
+
+          transfersFromPattern.get(patId).push({ fromStop, toPattern, toStop: transferStop })
         }
       })
     })
@@ -111,21 +118,28 @@ class SchematicLineMap extends Component {
     journeys.forEach(j => {
       j.segments.filter(s => s.type === 'TRANSIT')
         .forEach((s, i, a) => {
+          let patId = s.pattern_id != null ? s.pattern_id : s.patterns[0].pattern_id
+          let fromStop = s.pattern_id != null ? s.from_stop_index : s.patterns[0].from_stop_index
+          let toStop = s.pattern_id != null ? s.to_stop_index : s.patterns[0].to_stop_index
+
           // draw the transfer if needed
           if (i > 0) {
             let prev = a[i - 1]
-            ret.push(<line x1={patternHorizOffsets.get(prev.pattern_id)}
-              x2={patternHorizOffsets.get(s.pattern_id)}
-              y1={(patternVerticalOffsets.get(prev.pattern_id) + prev.to_stop_index - minStopPerPattern.get(prev.pattern_id)) * cellHeight}
-              y2={(patternVerticalOffsets.get(s.pattern_id) + s.from_stop_index - minStopPerPattern.get(s.pattern_id)) * cellHeight}
+            let prevPatId = prev.pattern_id != null ? prev.pattern_id : prev.patterns[0].pattern_id
+            let prevToStop = prev.pattern_id != null ? prev.to_stop_index : prev.patterns[0].to_stop_index
+
+            ret.push(<line x1={patternHorizOffsets.get(prevPatId)}
+              x2={patternHorizOffsets.get(patId)}
+              y1={(patternVerticalOffsets.get(prevPatId) + prevToStop - minStopPerPattern.get(prevPatId)) * cellHeight}
+              y2={(patternVerticalOffsets.get(patId) + fromStop - minStopPerPattern.get(patId)) * cellHeight}
               style={{stroke: '#faa'}}
               markerEnd='url(#arrow)' />
             )
           }
 
-          let fromY = (patternVerticalOffsets.get(s.pattern_id) + s.from_stop_index - minStopPerPattern.get(s.pattern_id)) * cellHeight
-          let toY = (patternVerticalOffsets.get(s.pattern_id) + s.to_stop_index - minStopPerPattern.get(s.pattern_id)) * cellHeight
-          let x = patternHorizOffsets.get(s.pattern_id)
+          let fromY = (patternVerticalOffsets.get(patId) + fromStop - minStopPerPattern.get(patId)) * cellHeight
+          let toY = (patternVerticalOffsets.get(patId) + toStop - minStopPerPattern.get(patId)) * cellHeight
+          let x = patternHorizOffsets.get(patId)
 
           ret.push(<line x2={x}
               x1={x}
@@ -139,7 +153,7 @@ class SchematicLineMap extends Component {
           if (i === a.length - 1) ret.push(<circle cx={x} cy={toY} r={5} style={{stroke: '#000', fill: '#000'}} />)
 
           // add a label
-          let routeId = patterns.filter(p => p.pattern_id === s.pattern_id)[0].route_id
+          let routeId = patterns.filter(p => p.pattern_id === (s.pattern_id != null ? s.pattern_id : s.patterns[0].pattern_id))[0].route_id
           let route = routes.filter(r => r.route_id === routeId)[0].route_short_name
 
           let y = Math.min((fromY + toY) / 2, fromY + 55)
