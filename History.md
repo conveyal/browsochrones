@@ -1,4 +1,18 @@
 
+### 0.2.3 — 2016-03-16
+
+  * Make babel-plugins regular dependencies.
+
+### 0.2.2 — 2016-03-14
+
+  * Turn on/off bundling.
+  * Update jsolines.
+
+### 0.2.1 — 2016-03-10
+
+  * Return maximum of five paths.
+  * Aggressively filter to avoid tangles of routes.
+
 ### 0.2.0 — 2016-03-02
 
   * Renamed all `coordinates` to `point` following `lonlng` rules.
