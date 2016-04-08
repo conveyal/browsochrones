@@ -1,6 +1,6 @@
 {
   "name": "browsochrones",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Create isochrones and accessibility images in the browser",
   "main": "./build/index",
   "repository": {
@@ -34,7 +34,7 @@
     "babel-plugin-transform-runtime": "^6.4.3",
     "color": "^0.10.1",
     "debug": "^2.2.0",
-    "jsolines": "0.1.1",
+    "jsolines": "0.1.2",
     "json": "^9.0.3",
     "lodash.fill": "^3.3.2",
     "lodash.slice": "^4.0.2",
