@@ -71,12 +71,12 @@ var transitiveLayer = null
 
 async function updateIsoLayer () {
   console.log('updateIsoLayer')
-  if (isoLayer) map.removeLayer(isoLayer)
 
   const cutoff = document.getElementById('isochrone-cutoff').value
   console.time('getIsochrone')
   const iso = await bc.getIsochrone(cutoff)
   console.timeEnd('getIsochrone')
+  if (isoLayer) map.removeLayer(isoLayer)
   isoLayer = L.geoJson(iso, {
     style: {
       weight: 3,
