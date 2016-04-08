@@ -35,24 +35,34 @@ const SVG_ELEMENTS = {
 class ContourGrid extends Component {
   static propTypes = {
     contour: PropTypes.object.isRequired,
-    query: PropTypes.object.isRequired
+    query: PropTypes.object.isRequired,
+    west: PropTypes.number.isRequired,
+    north: PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired
   }
 
   render () {
     let elements = []
 
+    let { north, west } = this.props
+
     // contour grid is one pixel smaller in each dimension
-    let contourWidth = this.props.query.width - 1
-    let contourHeight = this.props.query.height - 1
+    let contourWidth = this.props.width - 1
+    let contourHeight = this.props.height - 1
     let cellWidth = WIDTH / contourWidth
     let cellHeight = HEIGHT / contourHeight
 
-    for (let y = 0, pixel = 0; y < contourHeight; y++) {
-      for (let x = 0; x < contourWidth; x++, pixel++) {
+    // the width of the full contour grid, not our subset
+    let fullContourWidth = this.props.query.width - 1
+
+    for (let y = north; y < north + contourHeight; y++) {
+      for (let x = west; x < west + contourWidth; x++) {
+        let pixel = y * fullContourWidth + x
         let idx = this.props.contour[pixel]
 
         elements.push(
-          <g transform={`scale(${cellWidth} ${cellHeight}) translate(${x} ${y})`} key={pixel}>
+          <g transform={`scale(${cellWidth} ${cellHeight}) translate(${x - west} ${y - north})`} key={pixel}>
             {SVG_ELEMENTS[idx]}
             <text style={{fontSize: '1px', fill: '#00f'}} transform='translate(0.25 0.5)'>{idx > 0 && idx < 15 ? HEX[idx] : ''}</text>
           </g>

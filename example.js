@@ -198,16 +198,36 @@ map.on('mousemove', async function (e) {
       // and schematic line map
       const lineMap = LineMapFactory({data: transitiveData})
       ReactDOM.render(lineMap, document.getElementById('lineMap'))
-    } catch (e) {
+    /*} catch (e) {
       console.error(e)
-    }
+    }*/
   }
 })
 
 document.getElementById('show-isochrone').addEventListener('click', async function () {
+  // click again to hide
+  if (document.getElementById('isochrone').style.display == 'block') {
+    document.getElementById('isochrone').style.display = 'none'
+    return
+  }
+
   document.getElementById('isochrone').style.display = 'block'
 
-  const contourGrid = ContourGridFactory({contour: await bc.getContour(), query: bc.query})
+  // figure out map pos
+  let bounds = map.getBounds()
+  let topLeft = bc.pixelToOriginPoint(map.project(bounds.getNorthWest()), map.getZoom())
+  let botRight = bc.pixelToOriginPoint(map.project(bounds.getSouthEast()), map.getZoom())
+
+  const contourGrid = ContourGridFactory({
+    contour: await bc.getContour(),
+    query: bc.query,
+    north: topLeft.y,
+    west: topLeft.x,
+    width: botRight.x - topLeft.x,
+    // unlike every other projection, south is larger in web mercator
+    height: botRight.y - topLeft.y
+  })
+
   ReactDOM.render(contourGrid, document.getElementById('isochrone'))
 
   return false
