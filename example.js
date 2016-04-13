@@ -21,10 +21,8 @@ var Browsochrone = require('./lib')
 const bc = new Browsochrone()
 const bc2 = new Browsochrone()
 
-const baseUrl = 'http://localhost:4567'
+const baseUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline-v4'
 const gridUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline-z9/intgrids'
-
-const grids = new Map()
 
 const map = L.mapbox
   .map('map', 'conveyal.hml987j0', {
@@ -48,12 +46,14 @@ Promise
   .then(function (res) {
     bc.setQuery(res[0])
     bc.setStopTrees(res[1].slice(0))
-    grids.set('jobs', res[2])
-    grids.set('workers', res[3])
+    bc.putGrid('jobs', res[2].slice(0))
+    bc.putGrid('workers', res[3].slice(0))
     bc.setTransitiveNetwork(res[4])
 
     bc2.setQuery(res[0])
     bc2.setStopTrees(res[1].slice(0))
+    bc2.putGrid('jobs', res[2].slice(0))
+    bc2.putGrid('workers', res[3].slice(0))
     bc2.setTransitiveNetwork(res[4])
 
     console.log('loaded')
@@ -86,6 +86,17 @@ async function updateIsoLayer () {
       fillOpacity: 0.3
     }
   }).addTo(map)
+
+  // Set the access output
+  console.time('job access')
+  const jobAccess = await bc.getAccessibilityForGrid('jobs', cutoff)
+  document.getElementById('job-access').value = Math.round(jobAccess)
+  console.timeEnd('job access')
+
+  console.time('workforce access')
+  const workforceAccess = await bc.getAccessibilityForGrid('workers', cutoff)
+  document.getElementById('wf-access').value = Math.round(workforceAccess)
+  console.timeEnd('workforce access')
 }
 
 map.on('click', async function (e) {
@@ -122,17 +133,6 @@ map.on('click', async function (e) {
       console.timeEnd('generating surface')
       await bc2.generateSurface()
       console.timeEnd('generating both surfaces')
-
-      // Set the access output
-      console.time('job access')
-      const jobAccess = await bc.getAccessibilityForGrid(grids.get('jobs'))
-      document.getElementById('job-access').value = Math.round(jobAccess)
-      console.timeEnd('job access')
-
-      console.time('workforce access')
-      const workforceAccess = await bc.getAccessibilityForGrid(grids.get('workers'))
-      document.getElementById('wf-access').value = Math.round(workforceAccess)
-      console.timeEnd('workforce access')
 
       if (surfaceLayer) map.removeLayer(surfaceLayer)
       if (isoLayer) map.removeLayer(isoLayer)
