@@ -198,9 +198,9 @@ map.on('mousemove', async function (e) {
       // and schematic line map
       const lineMap = LineMapFactory({data: transitiveData})
       ReactDOM.render(lineMap, document.getElementById('lineMap'))
-    /*} catch (e) {
+    } catch (e) {
       console.error(e)
-    }*/
+    }
   }
 })
 
