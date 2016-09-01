@@ -50,7 +50,7 @@
     "babel-preset-stage-0": "^6.3.13",
     "babelify": "^7.2.0",
     "budo": "^9.0.0",
-    "concat-stream": "^1.5.1",
+    "concat-stream": "^1.5.2",
     "isomorphic-fetch": "^2.2.0",
     "leaflet-transitivelayer": "^0.2.0",
     "lodash.reverse": "^4.0.1",
