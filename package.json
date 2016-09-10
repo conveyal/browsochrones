@@ -49,7 +49,7 @@
     "babel-preset-react": "^6.1.18",
     "babel-preset-stage-0": "^6.3.13",
     "babelify": "^7.2.0",
-    "budo": "^9.0.0",
+    "budo": "^9.1.0",
     "concat-stream": "^1.5.2",
     "isomorphic-fetch": "^2.2.0",
     "leaflet-transitivelayer": "^0.2.0",
