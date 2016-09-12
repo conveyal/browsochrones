@@ -142,10 +142,10 @@ class SchematicLineMap extends Component {
           let x = patternHorizOffsets.get(patId)
 
           ret.push(<line x2={x}
-              x1={x}
-              y2={fromY}
-              y1={toY}
-              style={{stroke: '#aaf'}} />
+            x1={x}
+            y2={fromY}
+            y1={toY}
+            style={{stroke: '#aaf'}} />
           )
 
           // if we're at the start of the trip add a marker for the origin
@@ -161,8 +161,7 @@ class SchematicLineMap extends Component {
             style={{fontFamily: 'sans', fontSize: '9pt', fill: '#66f'}}
             transform={`rotate(90 ${x} ${y})`}>
               {route}
-            </text>
-          )
+          </text>)
         })
     })
 
@@ -170,7 +169,7 @@ class SchematicLineMap extends Component {
       <defs>
         {/* "is" forces react to pass all attrs through untouched: https://github.com/facebook/react/issues/140#issuecomment-114290163 */}
         <marker is id='arrow' markerwidth={10} markerheight={6} orient='auto' refX='10' refY='3'>
-          <path d='M0,0 L10,3 L0,6 L0,0' style={{fill: '#000'}}/>
+          <path d='M0,0 L10,3 L0,6 L0,0' style={{fill: '#000'}} />
         </marker>
       </defs>
       {ret}

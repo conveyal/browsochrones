@@ -23,9 +23,9 @@ test('basic', (assert) => {
   assert.equal(sface.surface[50 * 100 + 50], 56, 'middle') // 51 minutes travel time, 5 mins walk time
   assert.equal(sface.surface[100 * 100 - 1], 110, 'furthest point') // 100 mins travel, 10 mins walk
 
-  // check accessibility numbers (this is harder)
+  /* check accessibility numbers (this is harder)
   // everything up to row 50 should be accessible, but recall that the images are offset
-  let expected = 0
+  let expected
   for (let row = 0; row < 50; row++) {
     for (let col = 0; col < 90; col++) {
       expected += (row + 10) * 100 + col + 10 // there's a more efficient theoretical way other than a huge loop, but this is easier
@@ -43,7 +43,7 @@ test('basic', (assert) => {
   // accessiiblity at each departure minute and then taking an average, and there's something I haven't figured out
   // numerically that causes it to be off a bit. If instead of saving 6 travel times per departure minute we only save the one,
   // everything works as expected.
-  // assert.equal(accessibilityForCutoff(sface, 60, 'AVERAGE'), expected, 'accessibility')
+  // assert.equal(accessibilityForCutoff(sface, 60, 'AVERAGE'), expected, 'accessibility') */
 
   assert.end()
 })

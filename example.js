@@ -35,6 +35,7 @@ const map = L.mapbox
   })
   .setView([39.766667, -86.15], 12)
 
+console.log('fetching all')
 Promise
   .all([
     fetch(baseUrl + '/query.json').then(function (res) { return res.json() }),
@@ -44,6 +45,7 @@ Promise
     fetch(baseUrl + '/transitive.json').then(function (res) { return res.json() })
   ])
   .then(function (res) {
+    console.log('fetched all')
     bc.setQuery(res[0])
     bc.setStopTrees(res[1].slice(0))
     bc.putGrid('jobs', res[2].slice(0))
@@ -206,7 +208,7 @@ map.on('mousemove', async function (e) {
 
 document.getElementById('show-isochrone').addEventListener('click', async function () {
   // click again to hide
-  if (document.getElementById('isochrone').style.display == 'block') {
+  if (document.getElementById('isochrone').style.display === 'block') {
     document.getElementById('isochrone').style.display = 'none'
     return
   }
@@ -244,7 +246,7 @@ document.getElementById('isochrone-play').addEventListener('click', function () 
   const interval = setInterval(function () {
     slider.value = minute++
     // trigger update
-    slider.dispatchEvent(new Event('input'))
+    slider.dispatchEvent(new window.Event('input'))
     if (minute > 120) clearInterval(interval)
   })
 
