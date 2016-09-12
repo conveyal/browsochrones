@@ -22,7 +22,7 @@
     "json": "^9.0.3",
     "lodash.fill": "^3.3.2",
     "lodash.slice": "^4.0.2",
-    "web-worker-promise-interface": "^0.1.0"
+    "web-worker-promise-interface": "^0.2.0"
   },
   "devDependencies": {
     "concat-stream": "^1.5.2",
