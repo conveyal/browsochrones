@@ -32,7 +32,7 @@
     "lodash.reverse": "^4.0.1",
     "mapbox.js": "^2.2.4",
     "mastarm": "^0.10.0",
-    "normalize.css": "^4.2.0",
+    "normalize.css": "^5.0.0",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
     "tape": "^4.2.2",
