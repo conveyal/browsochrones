@@ -15,7 +15,7 @@ test('basic', (assert) => {
     height: 100
   }
 
-  let sface = getSurface({query, stopTreeCache, origin, which: 'AVERAGE', grid})
+  let sface = getSurface({query, stopTreeCache, origin, which: 'MEDIAN', grid})
 
   // check travel time values
   assert.equal(sface.surface[0], 1, 'zero propagation time') // 1 min travel, 0 mins walk
