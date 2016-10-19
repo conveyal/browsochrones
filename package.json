@@ -16,7 +16,9 @@
   "author": "Conveyal",
   "license": "MIT",
   "dependencies": {
+    "chroma-js": "^1.2.1",
     "color": "^0.11.3",
+    "d3": "^4.2.7",
     "debug": "^2.2.0",
     "jsolines": "^0.2.2",
     "json": "^9.0.3",
@@ -35,9 +37,9 @@
     "normalize.css": "^5.0.0",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
+    "semantic-release": "^4.3.5",
     "tape": "^4.2.2",
-    "transitive-js": "^0.8.2",
-    "semantic-release": "^4.3.5"
+    "transitive-js": "^0.8.2"
   },
   "standard": {
     "parser": "babel-eslint"
