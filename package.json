@@ -16,9 +16,7 @@
   "author": "Conveyal",
   "license": "MIT",
   "dependencies": {
-    "chroma-js": "^1.2.1",
     "color": "^0.11.3",
-    "d3": "^4.2.7",
     "debug": "^2.2.0",
     "jsolines": "^0.2.2",
     "json": "^9.0.3",
