@@ -23,6 +23,7 @@
     "leaflet": "^0.7.7",
     "lodash.fill": "^3.3.2",
     "lodash.slice": "^4.0.2",
+    "lonlng": "^0.2.0",
     "web-worker-promise-interface": "^0.2.0"
   },
   "devDependencies": {
