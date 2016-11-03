@@ -157,11 +157,12 @@ class SchematicLineMap extends Component {
           let route = routes.filter(r => r.route_id === routeId)[0].route_short_name
 
           let y = Math.min((fromY + toY) / 2, fromY + 55)
-          ret.push(<text x={x} y={y}
-            style={{fontFamily: 'sans', fontSize: '9pt', fill: '#66f'}}
-            transform={`rotate(90 ${x} ${y})`}>
-              {route}
-          </text>)
+          ret.push(
+            <text x={x} y={y}
+              style={{fontFamily: 'sans', fontSize: '9pt', fill: '#66f'}}
+              transform={`rotate(90 ${x} ${y})`}>{route}
+            </text>
+          )
         })
     })
 
