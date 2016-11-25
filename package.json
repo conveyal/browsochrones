@@ -1,14 +1,14 @@
 {
   "name": "browsochrones",
   "description": "Create isochrones and accessibility images in the browser",
-  "main": "./build/lib/index",
+  "main": "./build/index",
   "repository": {
     "type": "git",
     "url": "https://github.com/conveyal/browsochrones"
   },
   "scripts": {
     "lint": "mastarm lint",
-    "prepublish": "mastarm prepublish lib",
+    "prepublish": "mastarm prepublish lib --outdir build",
     "start": "mastarm build --serve example.js:assets/index.js",
     "test": "mastarm lint",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
