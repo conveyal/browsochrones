@@ -21,8 +21,8 @@ import Browsochrone from './lib'
 const bc = new Browsochrone()
 const bc2 = new Browsochrone()
 
-const baseUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline-v4'
-const gridUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline-z9/intgrids'
+const baseUrl = 'https://dz69bcpxxuhn6.cloudfront.net/indy-baseline-v6'
+const gridUrl = 'https://dz69bcpxxuhn6.cloudfront.net/indy-baseline-z9/intgrids'
 
 const map = window.map = L.mapbox
   .map('map', 'conveyal.hml987j0', {
@@ -41,8 +41,7 @@ Promise
     fetch(baseUrl + '/query.json').then(function (res) { return res.json() }),
     fetch(baseUrl + '/stop_trees.dat').then(function (res) { return res.arrayBuffer() }),
     fetch(gridUrl + '/Jobs_total.grid').then(function (res) { return res.arrayBuffer() }),
-    fetch(gridUrl + '/Workers_total.grid').then(function (res) { return res.arrayBuffer() }),
-    fetch(baseUrl + '/transitive.json').then(function (res) { return res.json() })
+    fetch(gridUrl + '/Workers_total.grid').then(function (res) { return res.arrayBuffer() })
   ])
   .then(async function (res) {
     console.log('fetched all')
@@ -50,13 +49,13 @@ Promise
     await bc.setStopTrees(res[1].slice(0))
     await bc.putGrid('jobs', res[2].slice(0))
     await bc.putGrid('workers', res[3].slice(0))
-    await bc.setTransitiveNetwork(res[4])
+    await bc.setTransitiveNetwork(res[0].transitiveData)
 
     await bc2.setQuery(res[0])
     await bc2.setStopTrees(res[1].slice(0))
     await bc2.putGrid('jobs', res[2].slice(0))
     await bc2.putGrid('workers', res[3].slice(0))
-    await bc2.setTransitiveNetwork(res[4])
+    await bc2.setTransitiveNetwork(res[0].transitiveData)
 
     console.log('loaded')
     var query = res[0]
