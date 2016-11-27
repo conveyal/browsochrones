@@ -24,7 +24,7 @@ const bc2 = new Browsochrone()
 const baseUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline-v4'
 const gridUrl = 'http://s3.amazonaws.com/analyst-static/indy-baseline-z9/intgrids'
 
-const map = L.mapbox
+const map = window.map = L.mapbox
   .map('map', 'conveyal.hml987j0', {
     accessToken: 'pk.eyJ1IjoiY29udmV5YWwiLCJhIjoiY2lndnI5cms4MHJ4Mnd3bTB4MzYycDc4NiJ9.C40M0KSYXGSX_IbbqN53Eg',
     tileLayer: {
@@ -44,23 +44,26 @@ Promise
     fetch(gridUrl + '/Workers_total.grid').then(function (res) { return res.arrayBuffer() }),
     fetch(baseUrl + '/transitive.json').then(function (res) { return res.json() })
   ])
-  .then(function (res) {
+  .then(async function (res) {
     console.log('fetched all')
-    bc.setQuery(res[0])
-    bc.setStopTrees(res[1].slice(0))
-    bc.putGrid('jobs', res[2].slice(0))
-    bc.putGrid('workers', res[3].slice(0))
-    bc.setTransitiveNetwork(res[4])
+    await bc.setQuery(res[0])
+    await bc.setStopTrees(res[1].slice(0))
+    await bc.putGrid('jobs', res[2].slice(0))
+    await bc.putGrid('workers', res[3].slice(0))
+    await bc.setTransitiveNetwork(res[4])
 
-    bc2.setQuery(res[0])
-    bc2.setStopTrees(res[1].slice(0))
-    bc2.putGrid('jobs', res[2].slice(0))
-    bc2.putGrid('workers', res[3].slice(0))
-    bc2.setTransitiveNetwork(res[4])
+    await bc2.setQuery(res[0])
+    await bc2.setStopTrees(res[1].slice(0))
+    await bc2.putGrid('jobs', res[2].slice(0))
+    await bc2.putGrid('workers', res[3].slice(0))
+    await bc2.setTransitiveNetwork(res[4])
 
     console.log('loaded')
     var query = res[0]
-    map.setView(map.unproject([query.west + query.width / 2, query.north + query.height / 2], query.zoom), 11)
+    const center = map.unproject([query.west + query.width / 2, query.north + query.height / 2], query.zoom)
+    console.log('setting center to ', center)
+    map.setView(center, 11)
+    map.fire('click', {latlng: {lat: 39.77424175134454, lng: -86.15478515625001}})
   })
   .catch(function (e) {
     console.error(e)
@@ -106,6 +109,7 @@ map.on('click', async function (e) {
   if (bc.isReady()) {
     if (clickCount % 2 === 0) {
       // get the pixel coordinates
+      console.log('projecting', e.latlng)
       var point = bc.pixelToOriginPoint(map.project(e.latlng), map.getZoom())
       document.getElementById('location').value = (point.x | 0) + '/' + (point.y | 0)
 
@@ -205,7 +209,7 @@ map.on('click', async function (e) {
     }
   }
 
-  clickCount++
+  // clickCount++ TODO: Get transitive working again
 })
 
 document.getElementById('show-isochrone').addEventListener('click', async function () {
