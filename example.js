@@ -16,7 +16,7 @@ var LineMapFactory = React.createFactory(LineMap)
 var ContourGrid = require('./test/contour-grid')
 var ContourGridFactory = React.createFactory(ContourGrid)
 
-var Browsochrone = require('./lib')
+import Browsochrone from './lib'
 
 const bc = new Browsochrone()
 const bc2 = new Browsochrone()
@@ -101,109 +101,111 @@ async function updateIsoLayer () {
   console.timeEnd('workforce access')
 }
 
+let clickCount = 0
 map.on('click', async function (e) {
   if (bc.isReady()) {
-    // get the pixel coordinates
-    var point = bc.pixelToOriginPoint(map.project(e.latlng), map.getZoom())
-    document.getElementById('location').value = (point.x | 0) + '/' + (point.y | 0)
+    if (clickCount % 2 === 0) {
+      // get the pixel coordinates
+      var point = bc.pixelToOriginPoint(map.project(e.latlng), map.getZoom())
+      document.getElementById('location').value = (point.x | 0) + '/' + (point.y | 0)
 
-    if (!bc.pointInQueryBounds(point)) {
-      if (surfaceLayer) {
-        map.removeLayer(surfaceLayer)
-        surfaceLayer = null
+      if (!bc.pointInQueryBounds(point)) {
+        if (surfaceLayer) {
+          map.removeLayer(surfaceLayer)
+          surfaceLayer = null
+        }
+
+        if (isoLayer) {
+          map.removeLayer(isoLayer)
+          isoLayer = null
+        }
+
+        return
       }
 
-      if (isoLayer) {
-        map.removeLayer(isoLayer)
-        isoLayer = null
+      console.time('fetching origin')
+      try {
+        const response = await fetch(baseUrl + '/' + (point.x | 0) + '/' + (point.y | 0) + '.dat')
+        const data = await response.arrayBuffer()
+        console.timeEnd('fetching origin')
+        await bc.setOrigin(data.slice(0), point)
+        await bc2.setOrigin(data.slice(0), point)
+
+        console.time('generating surface')
+        console.time('generating both surfaces')
+        await bc.generateSurface()
+        console.timeEnd('generating surface')
+        await bc2.generateSurface()
+        console.timeEnd('generating both surfaces')
+
+        if (surfaceLayer) map.removeLayer(surfaceLayer)
+        if (isoLayer) map.removeLayer(isoLayer)
+
+        surfaceLayer = new window.L.GridLayer()
+        console.log('tile size', surfaceLayer.getTileSize())
+        surfaceLayer.createTile = bc.createTile
+        surfaceLayer.addTo(map)
+
+        updateIsoLayer()
+      } catch (err) {
+        if (surfaceLayer) {
+          map.removeLayer(surfaceLayer)
+          surfaceLayer = null
+        }
+
+        console.error(err)
+        console.error(err.stack)
       }
+    } else {
+      const point = bc.pixelToOriginPoint(map.project(e.latlng), map.getZoom())
 
-      return
-    }
+      console.time('transitive data')
+      try {
+        const data = await bc.generateDestinationData(point)
+        console.log(data)
+        const transitiveData = data.transitive
+        const transitive = new Transitive({data: transitiveData})
+        console.timeEnd('transitive data')
 
-    console.time('fetching origin')
-    try {
-      const response = await fetch(baseUrl + '/' + (point.x | 0) + '/' + (point.y | 0) + '.dat')
-      const data = await response.arrayBuffer()
-      console.timeEnd('fetching origin')
-      await bc.setOrigin(data.slice(0), point)
-      await bc2.setOrigin(data.slice(0), point)
+        console.log(transitiveData.journeys.length + ' unique paths')
 
-      console.time('generating surface')
-      console.time('generating both surfaces')
-      await bc.generateSurface()
-      console.timeEnd('generating surface')
-      await bc2.generateSurface()
-      console.timeEnd('generating both surfaces')
+        if (transitiveLayer !== null) {
+          map.removeLayer(transitiveLayer)
+        }
 
-      if (surfaceLayer) map.removeLayer(surfaceLayer)
-      if (isoLayer) map.removeLayer(isoLayer)
+        transitiveLayer = new L.TransitiveLayer(transitive)
+        map.addLayer(transitiveLayer)
+        // see leaflet.transitivelayer issue #2
+        transitiveLayer._refresh()
 
-      surfaceLayer = window.L.tileLayer.canvas()
-      surfaceLayer.drawTile = bc.drawTile.bind(bc)
-      surfaceLayer.addTo(map)
+        let { paths, times } = data.paths
 
-      updateIsoLayer()
-    } catch (err) {
-      if (surfaceLayer) {
-        map.removeLayer(surfaceLayer)
-        surfaceLayer = null
+        // they come out of r5 backwards
+        reverse(times)
+        reverse(paths)
+
+        // clear the ones that are the same and arrive at the same time
+        for (let p = 0; p < paths.length - 1; p++) {
+          // + 1: time is offset one minute (wait one minute and take the trip at the next minute)
+          if (times[p] === times[p + 1] + 1 && paths[p][0] === paths[p + 1][0] && paths[p][1] === paths[p + 1][1]) paths[p] = undefined
+        }
+
+        paths = await Promise.all(paths.filter(p => !!p).map(path => bc.getPath(path)))
+
+        // set up Marey plot
+        const marey = MareyFactory({dest: point, paths, times, transitiveData})
+        ReactDOM.render(marey, document.getElementById('marey'))
+
+        // and schematic line map
+        const lineMap = LineMapFactory({data: transitiveData})
+        ReactDOM.render(lineMap, document.getElementById('lineMap'))
+      } catch (e) {
+        console.error(e)
       }
-
-      console.error(err)
-      console.error(err.stack)
     }
   }
-})
 
-map.on('mousemove', async function (e) {
-  if (bc.isLoaded()) {
-    const point = bc.pixelToOriginPoint(map.project(e.latlng), map.getZoom())
-
-    console.time('transitive data')
-    try {
-      const data = await bc.generateDestinationData(point)
-      console.log(data)
-      const transitiveData = data.transitive
-      const transitive = new Transitive({data: transitiveData})
-      console.timeEnd('transitive data')
-
-      console.log(transitiveData.journeys.length + ' unique paths')
-
-      if (transitiveLayer !== null) {
-        map.removeLayer(transitiveLayer)
-      }
-
-      transitiveLayer = new L.TransitiveLayer(transitive)
-      map.addLayer(transitiveLayer)
-      // see leaflet.transitivelayer issue #2
-      transitiveLayer._refresh()
-
-      let { paths, times } = data.paths
-
-      // they come out of r5 backwards
-      reverse(times)
-      reverse(paths)
-
-      // clear the ones that are the same and arrive at the same time
-      for (let p = 0; p < paths.length - 1; p++) {
-        // + 1: time is offset one minute (wait one minute and take the trip at the next minute)
-        if (times[p] === times[p + 1] + 1 && paths[p][0] === paths[p + 1][0] && paths[p][1] === paths[p + 1][1]) paths[p] = undefined
-      }
-
-      paths = await Promise.all(paths.filter(p => !!p).map(path => bc.getPath(path)))
-
-      // set up Marey plot
-      const marey = MareyFactory({dest: point, paths, times, transitiveData})
-      ReactDOM.render(marey, document.getElementById('marey'))
-
-      // and schematic line map
-      const lineMap = LineMapFactory({data: transitiveData})
-      ReactDOM.render(lineMap, document.getElementById('lineMap'))
-    } catch (e) {
-      console.error(e)
-    }
-  }
+  clickCount++
 })
 
 document.getElementById('show-isochrone').addEventListener('click', async function () {
