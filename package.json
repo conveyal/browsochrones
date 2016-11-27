@@ -9,6 +9,7 @@
   "scripts": {
     "lint": "mastarm lint",
     "prepublish": "mastarm prepublish lib --outdir build",
+    "prestart": "yarn",
     "start": "mastarm build --serve example.js:assets/index.js",
     "test": "mastarm lint",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
