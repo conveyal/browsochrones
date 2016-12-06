@@ -1,14 +1,15 @@
 {
   "name": "browsochrones",
   "description": "Create isochrones and accessibility images in the browser",
-  "main": "./build/lib/index",
+  "main": "./build/index",
   "repository": {
     "type": "git",
     "url": "https://github.com/conveyal/browsochrones"
   },
   "scripts": {
     "lint": "mastarm lint",
-    "prepublish": "mastarm prepublish lib",
+    "prepublish": "mastarm prepublish lib --outdir build",
+    "prestart": "yarn",
     "start": "mastarm build --serve example.js:assets/index.js",
     "test": "mastarm lint",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
@@ -16,29 +17,27 @@
   "author": "Conveyal",
   "license": "MIT",
   "dependencies": {
-    "color": "^0.11.3",
-    "debug": "^2.2.0",
-    "jsolines": "^0.2.2",
-    "json": "^9.0.3",
-    "leaflet": "^0.7.7",
-    "lodash.fill": "^3.3.2",
-    "lodash.slice": "^4.0.2",
+    "color": "^0.11.4",
+    "debug": "^2.3.3",
+    "jsolines": "^0.2.3",
+    "lodash.fill": "^3.4.0",
+    "lodash.slice": "^4.2.0",
     "lonlng": "^0.2.0",
     "web-worker-promise-interface": "^0.2.0"
   },
   "devDependencies": {
     "concat-stream": "^1.5.2",
-    "isomorphic-fetch": "^2.2.0",
+    "isomorphic-fetch": "^2.2.1",
     "leaflet-transitivelayer": "^0.2.0",
     "lodash.reverse": "^4.0.1",
-    "mapbox.js": "^2.2.4",
-    "mastarm": "^0.10.0",
+    "mapbox.js": "^3.0.1",
+    "mastarm": "^3.0.0",
     "normalize.css": "^5.0.0",
-    "react": "^15.3.1",
-    "react-dom": "^15.3.1",
-    "semantic-release": "^4.3.5",
-    "tape": "^4.2.2",
-    "transitive-js": "^0.8.2"
+    "react": "^15.4.1",
+    "react-dom": "^15.4.1",
+    "semantic-release": "^6.3.2",
+    "tape": "^4.6.3",
+    "transitive-js": "^0.9.2"
   },
   "standard": {
     "parser": "babel-eslint"
