@@ -136,9 +136,9 @@ map.on('click', async function (e) {
 
         console.time('generating surface')
         console.time('generating both surfaces')
-        await bc.generateSurface()
+        await bc.generateSurface('jobs')
         console.timeEnd('generating surface')
-        await bc2.generateSurface()
+        await bc2.generateSurface('jobs')
         console.timeEnd('generating both surfaces')
 
         if (surfaceLayer) map.removeLayer(surfaceLayer)
