@@ -1,6 +1,6 @@
 import debug from 'debug'
 import fetch from 'isomorphic-fetch'
-import Leaflet from 'mapbox.js'
+import Leaflet from 'leaflet'
 import Transitive from 'transitive-js'
 import 'leaflet-transitivelayer'
 
@@ -9,20 +9,22 @@ import transitiveStyle from './transitive-style'
 
 debug.enable('*')
 
+Leaflet.Icon.Default.imagePath = 'node_modules/leaflet/dist/images/'
+
 const b = new Browsochrones({webpack: false}) // set to true if using webpack to bundle
 const baseUrl = 'https://dz69bcpxxuhn6.cloudfront.net/indy-baseline-v6'
 const gridUrl = 'https://dz69bcpxxuhn6.cloudfront.net/indy-baseline-z9/intgrids'
 const cutoff = 60 // minutes
-const map = Leaflet.mapbox
-  .map('map', 'conveyal.hml987j0', {
-    accessToken: 'pk.eyJ1IjoiY29udmV5YWwiLCJhIjoiY2lndnI5cms4MHJ4Mnd3bTB4MzYycDc4NiJ9.C40M0KSYXGSX_IbbqN53Eg',
-    tileLayer: {
-      maxZoom: 18
-    },
-    inertia: false, // recommended when using a transitive layer
-    zoomAnimation: false
-  })
-  .setView([39.766667, -86.15], 12)
+const map = Leaflet.map('map', {
+  center: [39.766667, -86.15],
+  maxZoom: 18,
+  inertia: false, // recommended when using a transitive layer
+  zoom: 12,
+  zoomAnimation: false
+})
+Leaflet.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
+}).addTo(map)
 const lonlat = {lat: 39.766667, lon: -86.15}
 Leaflet.marker(lonlat).addTo(map)
 
@@ -71,13 +73,13 @@ async function run () {
   })
   console.log('generated destination data')
 
-  const surfaceLayer = new Leaflet.GridLayer()
-  surfaceLayer.createTile = b.createTile // automatically bound to the instance
+  const surfaceLayer = Leaflet.tileLayer.canvas()
+  surfaceLayer.drawTile = b.drawTile // automatically bound to the instance
   surfaceLayer.addTo(map)
   console.log('surface layer added to map')
 
   const isochrone = await b.getIsochrone(cutoff) // minutes
-  const isoLayer = Leaflet.geoJSON(isochrone, {
+  const isoLayer = Leaflet.geoJson(isochrone, {
     style: {
       weight: 3,
       color: '#f00',
