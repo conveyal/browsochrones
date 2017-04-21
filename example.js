@@ -1,3 +1,5 @@
+import Browsochrone from './lib'
+
 var fetch = require('isomorphic-fetch')
 var Transitive = require('transitive-js')
 var L = require('mapbox.js')
@@ -15,8 +17,6 @@ var LineMapFactory = React.createFactory(LineMap)
 
 var ContourGrid = require('./test/contour-grid')
 var ContourGridFactory = React.createFactory(ContourGrid)
-
-import Browsochrone from './lib'
 
 const bc = new Browsochrone()
 const bc2 = new Browsochrone()
@@ -104,15 +104,16 @@ async function updateIsoLayer () {
 }
 
 let clickCount = 0
+let originPoint = null
 map.on('click', async function (e) {
   if (bc.isReady()) {
     if (clickCount % 2 === 0) {
       // get the pixel coordinates
       console.log('projecting', e.latlng)
-      var point = bc.pixelToOriginPoint(map.project(e.latlng), map.getZoom())
-      document.getElementById('location').value = (point.x | 0) + '/' + (point.y | 0)
+      originPoint = bc.pixelToOriginPoint(map.project(e.latlng), map.getZoom())
+      document.getElementById('location').value = (originPoint.x | 0) + '/' + (originPoint.y | 0)
 
-      if (!bc.pointInQueryBounds(point)) {
+      if (!bc.pointInQueryBounds(originPoint)) {
         if (surfaceLayer) {
           map.removeLayer(surfaceLayer)
           surfaceLayer = null
@@ -128,11 +129,11 @@ map.on('click', async function (e) {
 
       console.time('fetching origin')
       try {
-        const response = await fetch(baseUrl + '/' + (point.x | 0) + '/' + (point.y | 0) + '.dat')
+        const response = await fetch(baseUrl + '/' + (originPoint.x | 0) + '/' + (originPoint.y | 0) + '.dat')
         const data = await response.arrayBuffer()
         console.timeEnd('fetching origin')
-        await bc.setOrigin(data.slice(0), point)
-        await bc2.setOrigin(data.slice(0), point)
+        await bc.setOrigin(data.slice(0), originPoint)
+        await bc2.setOrigin(data.slice(0), originPoint)
 
         console.time('generating surface')
         console.time('generating both surfaces')
@@ -164,7 +165,8 @@ map.on('click', async function (e) {
 
       console.time('transitive data')
       try {
-        const data = await bc.generateDestinationData(point)
+        console.log('from', originPoint, 'to', point)
+        const data = await bc.generateDestinationData({from: originPoint, to: point})
         console.log(data)
         const transitiveData = data.transitive
         const transitive = new Transitive({data: transitiveData})
@@ -181,6 +183,7 @@ map.on('click', async function (e) {
         // see leaflet.transitivelayer issue #2
         transitiveLayer._refresh()
 
+        /*
         let { paths, times } = data.paths
 
         // they come out of r5 backwards
@@ -201,14 +204,14 @@ map.on('click', async function (e) {
 
         // and schematic line map
         const lineMap = LineMapFactory({data: transitiveData})
-        ReactDOM.render(lineMap, document.getElementById('lineMap'))
+        ReactDOM.render(lineMap, document.getElementById('lineMap')) */
       } catch (e) {
         console.error(e)
       }
     }
   }
 
-  // clickCount++ TODO: Get transitive working again
+  clickCount++ // TODO: Get transitive working again
 })
 
 document.getElementById('show-isochrone').addEventListener('click', async function () {
@@ -221,9 +224,9 @@ document.getElementById('show-isochrone').addEventListener('click', async functi
   document.getElementById('isochrone').style.display = 'block'
 
   // figure out map pos
-  let bounds = map.getBounds()
-  let topLeft = bc.pixelToOriginPoint(map.project(bounds.getNorthWest()), map.getZoom())
-  let botRight = bc.pixelToOriginPoint(map.project(bounds.getSouthEast()), map.getZoom())
+  const bounds = map.getBounds()
+  const topLeft = bc.pixelToOriginPoint(map.project(bounds.getNorthWest()), map.getZoom())
+  const botRight = bc.pixelToOriginPoint(map.project(bounds.getSouthEast()), map.getZoom())
 
   const contourGrid = ContourGridFactory({
     contour: await bc.getContour(),

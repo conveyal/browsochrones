@@ -23,15 +23,15 @@
     "lodash.fill": "^3.4.0",
     "lodash.slice": "^4.2.0",
     "lonlng": "^0.2.0",
-    "web-worker-promise-interface": "^0.2.0"
+    "web-worker-promise-interface": "^0.3.0"
   },
   "devDependencies": {
     "concat-stream": "^1.5.2",
     "isomorphic-fetch": "^2.2.1",
     "leaflet-transitivelayer": "^0.2.0",
     "lodash.reverse": "^4.0.1",
-    "mapbox.js": "^3.0.1",
-    "mastarm": "^3.0.0",
+    "mapbox.js": "^3.1.0",
+    "mastarm": "^3.8.0",
     "normalize.css": "^5.0.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
