@@ -5,7 +5,6 @@ import Transitive from 'transitive-js'
 import 'leaflet-transitivelayer'
 
 import Browsochrones from './lib'
-import transitiveStyle from './transitive-style'
 
 debug.enable('*')
 
@@ -35,7 +34,10 @@ const destinationLonlat = generateDestinationLonLat(lonlat)
 Leaflet.marker(destinationLonlat).addTo(map)
 
 run()
-  .catch((err) => console.error(err.stack))
+  .catch((err) => {
+    console.error(err.message)
+    console.error(err.stack)
+  })
 
 async function run () {
   const query = await fetch(baseUrl + '/query.json').then((res) => res.json())
@@ -67,14 +69,10 @@ async function run () {
     from: point,
     to: destinationPoint
   })
-  const transitive = new Transitive({
-    ...TRANSITIVE_SETTINGS,
-    data: destinationData.transitive
-  })
-  console.log('generated destination data')
+  console.log('generated destination data', destinationData)
 
-  const surfaceLayer = Leaflet.tileLayer.canvas()
-  surfaceLayer.drawTile = b.drawTile // automatically bound to the instance
+  const surfaceLayer = new Leaflet.GridLayer()
+  surfaceLayer.createTile = b.createTile // automatically bound to the instance
   surfaceLayer.addTo(map)
   console.log('surface layer added to map')
 
@@ -89,9 +87,11 @@ async function run () {
     }
   })
   isoLayer.addTo(map)
-  console.log('isolayer added to map')
+  console.log('isolayer added to map', isochrone)
 
-  const transitiveLayer = new Leaflet.TransitiveLayer(transitive)
+  const transitiveLayer = new Leaflet.TransitiveLayer(new Transitive({
+    data: destinationData.transitive
+  }))
   map.addLayer(transitiveLayer)
   // see leaflet.transitivelayer issue #2
   transitiveLayer._refresh()
@@ -101,7 +101,6 @@ async function run () {
   console.log('job access', jobAccess)
   const workforceAccess = await b.getAccessibilityForGrid({gridId: 'workforce', cutoff})
   console.log('workforce access', workforceAccess)
-  console.log()
 }
 
 /**
@@ -125,24 +124,4 @@ function getDistance () {
 
 function getSign () {
   return (Math.random() * 2) > 1 ? 1 : -1
-}
-
-const TRANSITIVE_SETTINGS = {
-  gridCellSize: 200,
-  useDynamicRendering: true,
-  styles: transitiveStyle,
-  // see https://github.com/conveyal/transitive.js/wiki/Zoom-Factors
-  zoomFactors: [{
-    minScale: 0,
-    gridCellSize: 25,
-    internalVertexFactor: 1000000,
-    angleConstraint: 45,
-    mergeVertexThreshold: 200
-  }, {
-    minScale: 0.5,
-    gridCellSize: 0,
-    internalVertexFactor: 0,
-    angleConstraint: 5,
-    mergeVertexThreshold: 0
-  }]
 }
