@@ -27,7 +27,7 @@
     "web-worker-promise-interface": "^0.2.1"
   },
   "devDependencies": {
-    "babel-loader": "^6.2.10",
+    "babel-loader": "^7.0.0",
     "babel-polyfill": "^6.22.0",
     "concat-stream": "^1.5.2",
     "isomorphic-fetch": "^2.2.1",
