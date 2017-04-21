@@ -12,7 +12,7 @@
     "prestart": "yarn",
     "start": "mastarm build --serve example.js:assets/index.js",
     "start-webpack": "webpack --watch",
-    "test": "mastarm lint",
+    "test": "mastarm lint lib/*",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "author": "Conveyal",
