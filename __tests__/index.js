@@ -38,8 +38,8 @@ describe('Browsochrones', () => {
 
   it('create grid', () => {
     ctx.grid = createGrid(jobsGrid)
-    const {data, ...restOfGrid} = ctx.grid
-    expect(restOfGrid).toMatchSnapshot()
+    const {data, ...snapshot} = ctx.grid
+    expect(snapshot).toMatchSnapshot()
   })
 
   it('create origin', () => {
@@ -47,8 +47,8 @@ describe('Browsochrones', () => {
       data: new Int32Array(originData),
       point: ORIGIN_POINT
     })
-    const {data, index, ...restOfOrigin} = ctx.origin
-    expect(restOfOrigin).toMatchSnapshot()
+    const {data, index, ...snapshot} = ctx.origin
+    expect(snapshot).toMatchSnapshot()
   })
 
   it('generate surface', () => {
@@ -57,19 +57,20 @@ describe('Browsochrones', () => {
       query,
       which
     })
-    const {surface, ...surfaceInfo} = ctx.surface
-    expect(surfaceInfo).toMatchSnapshot()
+    const {surface, ...snapshot} = ctx.surface
+    expect(filterSnapshot(snapshot)).toMatchSnapshot()
   })
 
   it('generate destination data', () => {
-    const data = generateDestinationData({
+    const snapshot = generateDestinationData({
       ...ctx,
+      ...ctx.surface,
       from: ORIGIN_POINT,
       query,
       to: DEST_POINT,
       transitiveNetwork: query.transitiveData
     })
-    expect(data).toMatchSnapshot()
+    expect(filterSnapshot(snapshot)).toMatchSnapshot()
   })
 
   it('get isochrone', () => {
@@ -77,7 +78,7 @@ describe('Browsochrones', () => {
       ...query,
       surface: ctx.surface.surface
     })
-    expect(isochrone).toMatchSnapshot()
+    expect(filterSnapshot(isochrone)).toMatchSnapshot()
   })
 
   it('get accessibility for grid', () => {
@@ -89,3 +90,24 @@ describe('Browsochrones', () => {
     expect(access).toMatchSnapshot()
   })
 })
+
+function filterSnapshot (s, k) {
+  if (Array.isArray(s) || ArrayBuffer.isView(s)) {
+    return {
+      [`first${k ? `-${k}` : ''}`]: filterSnapshot(s[0]),
+      [`last${k ? `-${k}` : ''}`]: filterSnapshot(s[s.length - 1]),
+      length: s.length
+    }
+  }
+  if (typeof s === 'object') {
+    const copy = {...s}
+    Object.keys(copy).forEach((k) => {
+      copy[k] = filterSnapshot(copy[k], k)
+    })
+    return copy
+  }
+  if (typeof s === 'number' && !Number.isInteger(s)) {
+    return Number(s.toFixed(8)) // precision varies per environment (?)
+  }
+  return s
+}
