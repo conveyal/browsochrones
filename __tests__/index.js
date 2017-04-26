@@ -6,7 +6,7 @@ import path from 'path'
 import accessibilityForGrid from '../lib/accessibility-for-grid'
 import generateDestinationData from '../lib/generate-destination-data'
 import getIsochrone from '../lib/get-isochrone'
-import getSurface from '../lib/get-surface'
+import {create as createSurface} from '../lib/surface'
 import {create as createGrid} from '../lib/grid'
 import {create as createOrigin} from '../lib/origin'
 import {create as createStopTreeCache} from '../lib/stop-tree-cache'
@@ -52,7 +52,7 @@ describe('Browsochrones', () => {
   })
 
   it('generate surface', () => {
-    ctx.surface = getSurface({
+    ctx.surface = createSurface({
       ...ctx,
       query,
       which
