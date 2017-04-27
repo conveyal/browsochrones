@@ -58,7 +58,7 @@ describe('Browsochrones', () => {
       which
     })
     const {surface, ...snapshot} = ctx.surface
-    expect(filterSnapshot(snapshot)).toMatchSnapshot()
+    expect(summarizeSnapshot(snapshot)).toMatchSnapshot()
   })
 
   it('generate destination data', () => {
@@ -70,7 +70,7 @@ describe('Browsochrones', () => {
       to: DEST_POINT,
       transitiveNetwork: query.transitiveData
     })
-    expect(filterSnapshot(snapshot)).toMatchSnapshot()
+    expect(summarizeSnapshot(snapshot)).toMatchSnapshot()
   })
 
   it('get isochrone', () => {
@@ -78,7 +78,7 @@ describe('Browsochrones', () => {
       ...query,
       surface: ctx.surface.surface
     })
-    expect(filterSnapshot(isochrone)).toMatchSnapshot()
+    expect(summarizeSnapshot(isochrone)).toMatchSnapshot()
   })
 
   it('get accessibility for grid', () => {
@@ -91,18 +91,18 @@ describe('Browsochrones', () => {
   })
 })
 
-function filterSnapshot (s, k) {
+function summarizeSnapshot (s, k) {
   if (Array.isArray(s) || ArrayBuffer.isView(s)) {
     return {
-      [`first${k ? `-${k}` : ''}`]: filterSnapshot(s[0]),
-      [`last${k ? `-${k}` : ''}`]: filterSnapshot(s[s.length - 1]),
+      [`first${k ? `-${k}` : ''}`]: summarizeSnapshot(s[0]),
+      [`last${k ? `-${k}` : ''}`]: summarizeSnapshot(s[s.length - 1]),
       length: s.length
     }
   }
   if (typeof s === 'object') {
     const copy = {...s}
     Object.keys(copy).forEach((k) => {
-      copy[k] = filterSnapshot(copy[k], k)
+      copy[k] = summarizeSnapshot(copy[k], k)
     })
     return copy
   }
