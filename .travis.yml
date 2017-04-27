@@ -9,6 +9,7 @@ cache:
 before_install:
   - yarn global add codecov
 script:
+  - yarn run flow
   - yarn test -- --coverage
   - codecov
 after_success:

@@ -7,6 +7,7 @@
     "url": "https://github.com/conveyal/browsochrones"
   },
   "scripts": {
+    "flow": "flow",
     "lint": "mastarm lint",
     "prepublish": "mastarm prepublish lib --outdir build",
     "prestart": "yarn",
@@ -21,6 +22,7 @@
     "@conveyal/lonlat": "^1.3.0",
     "d3-color": "^1.0.3",
     "debug": "^2.6.4",
+    "flow-bin": "^0.44.2",
     "jsolines": "^0.2.3",
     "lodash": "^4.17.4",
     "web-worker-promise-interface": "^0.3.0"
