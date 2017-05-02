@@ -34,7 +34,7 @@
     "leaflet-transitivelayer": "^0.2.0",
     "lodash.reverse": "^4.0.1",
     "mastarm": "^3.8.0",
-    "normalize.css": "^6.0.0",
+    "normalize.css": "^7.0.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "semantic-release": "^6.3.2",
