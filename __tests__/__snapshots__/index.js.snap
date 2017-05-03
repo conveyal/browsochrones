@@ -1,0 +1,315 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Browsochrones create grid 1`] = `
+Object {
+  "contains": [Function],
+  "height": 237,
+  "max": 12558,
+  "min": 0,
+  "north": 49616,
+  "west": 33985,
+  "width": 355,
+  "zoom": 9,
+}
+`;
+
+exports[`Browsochrones create origin 1`] = `
+Object {
+  "nMinutes": 120,
+  "nStops": 3806,
+  "radius": 20,
+  "x": 125,
+  "y": 136,
+}
+`;
+
+exports[`Browsochrones create stop tree cache 1`] = `53320`;
+
+exports[`Browsochrones create stop tree cache 2`] = `0`;
+
+exports[`Browsochrones create stop tree cache 3`] = `1689608`;
+
+exports[`Browsochrones create stop tree cache 4`] = `3469825`;
+
+exports[`Browsochrones generate destination data 1`] = `
+Object {
+  "inVehicleTravelTime": 19,
+  "paths": Object {
+    "first-paths": Object {
+      "first": 1995,
+      "last": 0,
+      "length": 2,
+    },
+    "last-paths": Object {
+      "first": 1995,
+      "last": 0,
+      "length": 2,
+    },
+    "length": 120,
+  },
+  "times": Object {
+    "first-times": 56,
+    "last-times": 53,
+    "length": 120,
+  },
+  "transitive": Object {
+    "journeys": Object {
+      "first-journeys": Object {
+        "journey_id": 0,
+        "journey_name": 0,
+        "segments": Object {
+          "first-segments": Object {
+            "color": "rgb(165, 187, 0)",
+            "from": Object {
+              "place_id": "from",
+              "type": "PLACE",
+            },
+            "to": Object {
+              "stop_id": "1959",
+              "type": "STOP",
+            },
+            "type": "WALK",
+          },
+          "last-segments": Object {
+            "color": "rgb(165, 187, 0)",
+            "from": Object {
+              "stop_id": "3698",
+              "type": "STOP",
+            },
+            "to": Object {
+              "place_id": "to",
+              "type": "PLACE",
+            },
+            "type": "WALK",
+          },
+          "length": 3,
+        },
+      },
+      "last-journeys": Object {
+        "journey_id": 1,
+        "journey_name": 1,
+        "segments": Object {
+          "first-segments": Object {
+            "color": "rgb(0, 187, 44)",
+            "from": Object {
+              "place_id": "from",
+              "type": "PLACE",
+            },
+            "to": Object {
+              "stop_id": "1959",
+              "type": "STOP",
+            },
+            "type": "WALK",
+          },
+          "last-segments": Object {
+            "color": "rgb(0, 187, 44)",
+            "from": Object {
+              "stop_id": "1995",
+              "type": "STOP",
+            },
+            "to": Object {
+              "place_id": "to",
+              "type": "PLACE",
+            },
+            "type": "WALK",
+          },
+          "length": 3,
+        },
+      },
+      "length": 2,
+    },
+    "patterns": Object {
+      "first-patterns": Object {
+        "pattern_id": "0",
+        "pattern_name": "50",
+        "route_id": "0",
+        "stops": Object {
+          "first-stops": Object {
+            "geometry": "cvwqF~|}lOD{EnGH\`@kh@hEZpIJf@D\`GHbAkyAwGIy@voAE\`H@d@o@vt@k@CwLQ",
+            "stop_id": "736",
+          },
+          "last-stops": Object {
+            "geometry": Object {},
+            "stop_id": "736",
+          },
+          "length": 17,
+        },
+      },
+      "last-patterns": Object {
+        "pattern_id": "382",
+        "pattern_name": "3",
+        "route_id": "35",
+        "stops": Object {
+          "first-stops": Object {
+            "geometry": "irvqF\`kzlOt@@EjH",
+            "stop_id": "582",
+          },
+          "last-stops": Object {
+            "geometry": Object {},
+            "stop_id": "2478",
+          },
+          "length": 25,
+        },
+      },
+      "length": 383,
+    },
+    "places": Object {
+      "first-places": Object {
+        "place_id": "from",
+        "place_lat": 39.76843641,
+        "place_lon": -86.15203857,
+        "place_name": undefined,
+      },
+      "last-places": Object {
+        "place_id": "to",
+        "place_lat": 39.75999141,
+        "place_lon": -86.06140137,
+        "place_name": undefined,
+      },
+      "length": 2,
+    },
+    "routes": Object {
+      "first-routes": Object {
+        "agency_id": "IndyGo",
+        "route_color": "4269a4",
+        "route_id": "63",
+        "route_long_name": "Sunday North Loop",
+        "route_short_name": "26SN",
+        "route_type": 3,
+      },
+      "last-routes": Object {
+        "agency_id": "IndyGo",
+        "route_color": "4269a4",
+        "route_id": "0",
+        "route_long_name": "”Red Line\\"",
+        "route_short_name": "50",
+        "route_type": 3,
+      },
+      "length": 64,
+    },
+    "stops": Object {
+      "first-stops": Object {
+        "stop_id": "0",
+        "stop_lat": 39.8223119,
+        "stop_lon": -85.990967,
+        "stop_name": "Mitthoefer Rd & John Marshall Dr N",
+      },
+      "last-stops": Object {
+        "stop_id": "3805",
+        "stop_lat": 39.912093,
+        "stop_lon": -86.186015,
+        "stop_name": "86th St & Northbrook Shopping Center",
+      },
+      "length": 3806,
+    },
+  },
+  "travelTime": 54,
+  "waitTime": 7,
+  "walkTime": 29,
+}
+`;
+
+exports[`Browsochrones generate surface 1`] = `
+Object {
+  "inVehicleTravelTimes": Object {
+    "first-inVehicleTravelTimes": 255,
+    "last-inVehicleTravelTimes": 255,
+    "length": 53320,
+  },
+  "spectrogramData": Object {
+    "first-spectrogramData": Object {
+      "first": 0,
+      "last": 0,
+      "length": 120,
+    },
+    "last-spectrogramData": Object {
+      "first": 0,
+      "last": 0,
+      "length": 120,
+    },
+    "length": 120,
+  },
+  "waitTimes": Object {
+    "first-waitTimes": 255,
+    "last-waitTimes": 255,
+    "length": 53320,
+  },
+  "walkTimes": Object {
+    "first-walkTimes": 255,
+    "last-walkTimes": 255,
+    "length": 53320,
+  },
+}
+`;
+
+exports[`Browsochrones get accessibility for grid 1`] = `311967`;
+
+exports[`Browsochrones get isochrone 1`] = `
+Object {
+  "geometry": Object {
+    "coordinates": Object {
+      "first-coordinates": Object {
+        "first": Object {
+          "first": Object {
+            "first": -86.18270874,
+            "last": 39.89920151,
+            "length": 2,
+          },
+          "last": Object {
+            "first": -86.18270874,
+            "last": 39.89920151,
+            "length": 2,
+          },
+          "length": 1041,
+        },
+        "last": Object {
+          "first": Object {
+            "first": -86.12182617,
+            "last": 39.63319207,
+            "length": 2,
+          },
+          "last": Object {
+            "first": -86.12182617,
+            "last": 39.63319207,
+            "length": 2,
+          },
+          "length": 5,
+        },
+        "length": 34,
+      },
+      "last-coordinates": Object {
+        "first": Object {
+          "first": Object {
+            "first": -86.25366211,
+            "last": 39.71352536,
+            "length": 2,
+          },
+          "last": Object {
+            "first": -86.25366211,
+            "last": 39.71352536,
+            "length": 2,
+          },
+          "length": 5,
+        },
+        "last": Object {
+          "first": Object {
+            "first": -86.25366211,
+            "last": 39.71352536,
+            "length": 2,
+          },
+          "last": Object {
+            "first": -86.25366211,
+            "last": 39.71352536,
+            "length": 2,
+          },
+          "length": 5,
+        },
+        "length": 1,
+      },
+      "length": 10,
+    },
+    "type": "MultiPolygon",
+  },
+  "type": "Feature",
+}
+`;
