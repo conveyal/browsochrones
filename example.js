@@ -48,8 +48,10 @@ async function run () {
 
   await b.setQuery(query)
   await b.setStopTrees(stopTrees)
-  await b.putGrid({id: 'jobs', grid: grid1})
-  await b.putGrid({id: 'workforce', grid: grid2})
+  const jobsGridInfo = await b.putGrid({id: 'jobs', grid: grid1})
+  const workforceGridInfo = await b.putGrid({id: 'workforce', grid: grid2})
+  console.log('jobs grid: ', jobsGridInfo)
+  console.log('workforce grid: ', workforceGridInfo)
   await b.setTransitiveNetwork(query.transitiveData)
   console.log('initialized browsochrones')
 
@@ -57,8 +59,8 @@ async function run () {
   const data = await fetch(baseUrl + '/' + (point.x | 0) + '/' + (point.y | 0) + '.dat').then((res) => res.arrayBuffer())
   console.log('fetched origin point')
 
-  await b.setOrigin({arrayBuffer: data.slice(0), point})
-  console.log('origin set')
+  const originInfo = await b.setOrigin({data: data.slice(0), point})
+  console.log('origin set', originInfo)
 
   await b.generateSurface({gridId: 'jobs'})
   await b.generateSurface({gridId: 'workforce'})
@@ -69,14 +71,14 @@ async function run () {
     from: point,
     to: destinationPoint
   })
-  console.log('generated destination data', destinationData)
+  console.log('generated destination data for', destinationPoint, destinationData)
 
   const surfaceLayer = new Leaflet.GridLayer()
   surfaceLayer.createTile = b.createTile // automatically bound to the instance
   surfaceLayer.addTo(map)
   console.log('surface layer added to map')
 
-  const isochrone = await b.getIsochrone(cutoff) // minutes
+  const isochrone = await b.getIsochrone({cutoff}) // minutes
   const isoLayer = Leaflet.geoJson(isochrone, {
     style: {
       weight: 3,
